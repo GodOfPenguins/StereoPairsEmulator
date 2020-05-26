@@ -37,11 +37,18 @@ classdef StereoPairsEmulator < audioPlugin
         sY; % y value of source
         % x-coordinate values (converting to meters as the unit distance)
         % for the virtual microphones
-        dL;
-        dR;
-        dLF;
-        dRF;
-        dC; % this is a y-coordinate, of course
+        xML;
+        xMR;
+        xFL;
+        xFR;
+        yC;
+        %---
+        % NB: Channel ordering is LM RM LF RF C
+        dtArray; % For holding time delay values
+        ampArray; % For holding amplitude scalar values
+        recalcFlag; % It is not expected that the user will frequently change the UI values once they are set. So, continually calculating the spatial data is a waste of CPU. This flag will notify the plugin that a change was made.
+        dlyCompEnable; % Toggle to trigger the use of distance-based delay compensation.
+        cAdjust; % This is a user-adjustable offset to the speed of sound.
     end
     properties(Access = private)
         sampleRate = 48000; % default sample rate
@@ -51,7 +58,7 @@ classdef StereoPairsEmulator < audioPlugin
         PluginInterface = audioPluginInterface(...
             'PluginName','Stereo Pairs Emulator',...
             'VendorName','Fat Penguin Sound',...
-            'VendorVersion', '0.0.1',...
+            'VendorVersion', '0.0.2',...
             'InputChannels',1,...
             'OutputChannels',2,...
             audioPluginParameter('s',...
@@ -172,6 +179,14 @@ classdef StereoPairsEmulator < audioPlugin
                 'Layout',[1,1],...
                 'DisplayNameLocation','Above'...
             ),...
+            audioPluginParameter('cAdjust',...
+                'DisplayName','Time Alignment',...
+                'Mapping',{'lin',0,10},... % Based on an estimate of temperture values on a concert hall, giving a range of speed of sound values for potential tempertures.
+                'Style','Rotaryknob',...
+                'Layout',[1,1],...
+                'DisplayNameLocation','Above',...
+                'Label','m/s'...                
+            ),...
             audioPluginGridLayout( ...
                 'RowHeight',[20, 100, 20, 20, 100, 20, 100, 20, 160],...
                 'ColumnWidth',[50, 50, 50, 50, 100, 50, 50, 50, 50])...
@@ -252,8 +267,9 @@ classdef StereoPairsEmulator < audioPlugin
             plugin.toggleC=val;
         end
         function reset(plugin) % Reset the plugin
-            plugin.sampleRate = getSampleRate(plugin);
-            reset(plugin.delayLine);    
+            plugin.recalcFlag = 1; % Set plugin to recalculate spatial data
+            plugin.sampleRate = getSampleRate(plugin); % Get the sample rate
+            reset(plugin.delayLine); % Reinitialise the delay line
         end
     end
     methods(Static) % Convenience methods to simplify and segment the code
@@ -265,7 +281,7 @@ classdef StereoPairsEmulator < audioPlugin
         function t = splayConv(splay) % Converts the angular splay into a radian offset amount. Note that the angular splay is the angle between the virtual mics, so the offset amount needs to be half the splay.
             t = (splay * plugin.radConv) / 2;
         end
-        function setMicTheta(plugin) % Sets the theta for the main and flank mics.
+        function setTheta(plugin) % Sets the theta for the main and flank mics.
             % Convert the splays to radian values offset from forward
             tM = splayConv(plugin.splayM);
             tF = splayConv(plugin.splayF);
@@ -276,16 +292,33 @@ classdef StereoPairsEmulator < audioPlugin
             plugin.tMR = -tM + plugin.hpi;
             plugin.tFL = tF + plugin.hpi;
             plugin.tFR = -tF + plugin.hpi;
+            %Convert the source from degrees to radians, also need to flip
+            %it since -90 is leftward rotation. 
+            plugin.thetaS = (-1 * plugin.s) * plugin.radConv + plugin.hpi;
         end
         function setCartCoord(plugin) % Fills in the cartesian coordinates for the virtual mics
-            
-        end
-        function setDistances(plugin) % Sets the distance values based on user input
-            %Get the lateral distance from center and make appropriate unit
-            %conversions
+            % Intermediary calculations and unit conversions
             dM = (plugin.distanceM / 2) * cm2m;
             dF = plugin.distanceF / 2;
-            dC = plugin.distanceC * cm2m;
+            % Setters left microphones move -x and right microphones move
+            % +x
+            plugin.xML = -dM;
+            plugin.xMR = dM;
+            plugin.xFL = -dF;
+            plugin.xFR = dF;
+            plugin.yC = plugin.distanceC * cm2m;
+            % Get the source X and Y position
+            plugin.sX = plugin.dS * cos(plugin.thetaS)
+            plugin.sY = plugin.dS * sin(plugin.thetaS)
+        end
+        function createAmpArray(plugin)
+            % Get the angle of the source relative to each microphone
+            tSML = 
+            tSMR = 
+            tSFL = 
+            tSFR = 
+            tSC = 
+            
         end
     end
 end
