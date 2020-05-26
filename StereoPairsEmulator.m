@@ -308,16 +308,16 @@ classdef StereoPairsEmulator < audioPlugin
             plugin.xFR = dF;
             plugin.yC = plugin.distanceC * cm2m;
             % Get the source X and Y position
-            plugin.sX = plugin.dS * cos(plugin.thetaS)
-            plugin.sY = plugin.dS * sin(plugin.thetaS)
+            plugin.sX = plugin.dS * cos(plugin.thetaS);
+            plugin.sY = plugin.dS * sin(plugin.thetaS);
         end
         function createAmpArray(plugin)
             % Get the angle of the source relative to each microphone
-            tSML = 
-            tSMR = 
-            tSFL = 
-            tSFR = 
-            tSC = 
+            tSML = atan2(plugin.sY - plugin.yML, plugin.sX - plugin.xML );
+            tSMR = atan2(plugin.sY - plugin.yMR, plugin.sX - plugin.xMR );
+            tSFL = atan2(plugin.sY - plugin.yFL, plugin.sX - plugin.xFL );
+            tSFR = atan2(plugin.sY - plugin.yFR, plugin.sX - plugin.xFR );
+            tSC = atan2(plugin.sY - plugin.yC, plugin.sX - plugin.xC );
             
         end
     end
