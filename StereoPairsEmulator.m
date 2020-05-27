@@ -311,14 +311,47 @@ classdef StereoPairsEmulator < audioPlugin
             plugin.sX = plugin.dS * cos(plugin.thetaS);
             plugin.sY = plugin.dS * sin(plugin.thetaS);
         end
-        function createAmpArray(plugin)
+        function setAmpArray(plugin) % Feeds the correct amplitude scalar coefficients into the ampArray.
             % Get the angle of the source relative to each microphone
             tSML = atan2(plugin.sY - plugin.yML, plugin.sX - plugin.xML );
             tSMR = atan2(plugin.sY - plugin.yMR, plugin.sX - plugin.xMR );
             tSFL = atan2(plugin.sY - plugin.yFL, plugin.sX - plugin.xFL );
             tSFR = atan2(plugin.sY - plugin.yFR, plugin.sX - plugin.xFR );
             tSC = atan2(plugin.sY - plugin.yC, plugin.sX - plugin.xC );
-            
+            % Find the individual amp modifiers
+            ml = plugin.virtualMic(plugin.thetaML, tSML, pM);
+            mr = plugin.virtualMic(plugin.thetaML, tSMR, pM);
+            fl = plugin.virtualMic(plugin.thetaML, tSFL, pM);
+            fr = plugin.virtualMic(plugin.thetaML, tSFR, pM);
+            cent = plugin.virtualMic(plugin.thetaML, tSC, pM);
+            % Set the values in the array
+            plugin.ampArray = [ml mr fl fr cent];         
+        end
+        function d = calculateDistance (mx, my, sx, sy) % Returns the distance between points m and s.
+             x = (sx - mx)^2;
+             y = (sy - my)^2;
+             d = sqrt(x + y);
+        end
+        function t = distTimeConvert (d, sos) % Converts a distance to a time
+            t = d / sos;
+        end
+        function setDTArray(plugin) % Sets the delay times in dtArray
+            % Calculate distances from the source to each virtual mic
+            dML = plugin.calculateDistance(plugin.xML, plugin.yML, plugin.sX, plugin.sY);
+            dMR = plugin.calculateDistance(plugin.xMR, plugin.yMR, plugin.sX, plugin.sY);
+            dFL = plugin.calculateDistance(plugin.xFL, plugin.yFL, plugin.sX, plugin.sY);
+            dFR = plugin.calculateDistance(plugin.xFR, plugin.yFR, plugin.sX, plugin.sY);
+            dC = plugin.calculateDistance(plugin.xC, plugin.yC, plugin.sX, plugin.sY);
+            % Convert the distances to a time
+            sos = plugin.c + plugin.cAdjust;
+            tML = plugin.distTimeConvert(dML, sos);
+            tMR = plugin.distTimeConvert(dMR, sos);
+            tFL = plugin.distTimeConvert(dFL, sos);
+            tFR = plugin.distTimeConvert(dFR, sos);
+            tC = plugin.distTimeConvert(dC, sos);
+            % Add to the array
+            plugin.dtArray = [tML tMR tFL tFR tC];
+            plugin.dtArray = plugin.dtArray * plugin.sampleRate; % Convert to samples
         end
     end
 end
