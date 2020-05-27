@@ -181,7 +181,7 @@ classdef StereoPairsEmulator < audioPlugin
             ),...
             audioPluginParameter('cAdjust',...
                 'DisplayName','Time Alignment',...
-                'Mapping',{'lin',0,10},... % Based on an estimate of temperture values on a concert hall, giving a range of speed of sound values for potential tempertures.
+                'Mapping',{'lin',-10,10},... % Based on an estimate of temperture values on a concert hall, giving a range of speed of sound values for potential tempertures.
                 'Style','Rotaryknob',...
                 'Layout',[1,1],...
                 'DisplayNameLocation','Above',...
@@ -211,7 +211,10 @@ classdef StereoPairsEmulator < audioPlugin
     
     methods
         function plugin = StereoPairsEmulator %This is the constructor for the plugin            
-            plugin.delayLine = dsp.VariableIntegerDelay('MaximumDelay', 11520); %the delayline needs to be allocated here, this number is based off of 60ms at 192kHz.
+            plugin.delayLine = dsp.VariableIntegerDelay(... % The VID needs to be initialised here in the constructor
+            'MaximumDelay', 11520,... % 60ms @ 192kHz
+            'InitialConditions',0 ...
+        ); 
         end
         function out = process(plugin, in) %actual processing here
             
@@ -220,35 +223,45 @@ classdef StereoPairsEmulator < audioPlugin
         % A whole bunch of setters for the UI tunable parameters
         function set.dS(plugin, val)
             plugin.dS = val;
+            plugin.recalcFlag = 1; % Ignore the warning that MatLab throws here (per Mathworks plugin website). This will cause the intermediary values to be recalculated.
+                                   % See : https://www.mathworks.com/help/audio/ug/tips-and-tricks-for-plugin-authoring.html#bvnoc85-1 for more information about the error and why we can ignore it. 
         end
         function set.s(plugin,val)
             plugin.s = val;
+            plugin.recalcFlag = 1;
         end
         function set.distanceM(plugin,val)
             plugin.distanceM = val;
+            plugin.recalcFlag = 1;
         end
         function set.distanceF(plugin,val)
             plugin.distanceF = val;
+            plugin.recalcFlag = 1;
         end
         function set.distanceC(plugin,val)
             plugin.distanceC = val;
+            plugin.recalcFlag = 1;
         end
         function set.splayM(plugin,val)
             plugin.splayM = val;
         end
         function set.splayF(plugin,val)
             plugin.splayF = val;
+            plugin.recalcFlag = 1;
         end
         function set.pM(plugin,val)
             plugin.pM = val;
+            plugin.recalcFlag = 1;
         end
         function set.pF(plugin,val)
             plugin.pF = val;
+            plugin.recalcFlag = 1;
         end
         function set.pC(plugin,val)
             plugin.pC = val;
+            plugin.recalcFlag = 1;
         end
-        function set.levelM(plugin,val)
+        function set.levelM(plugin,val) % The rest of these don't need to retrigger the virtual mic calculations
             plugin.levelM = val;
         end
         function set.levelF(plugin,val)
@@ -319,11 +332,11 @@ classdef StereoPairsEmulator < audioPlugin
             tSFR = atan2(plugin.sY - plugin.yFR, plugin.sX - plugin.xFR );
             tSC = atan2(plugin.sY - plugin.yC, plugin.sX - plugin.xC );
             % Find the individual amp modifiers
-            ml = plugin.virtualMic(plugin.thetaML, tSML, pM);
-            mr = plugin.virtualMic(plugin.thetaML, tSMR, pM);
-            fl = plugin.virtualMic(plugin.thetaML, tSFL, pM);
-            fr = plugin.virtualMic(plugin.thetaML, tSFR, pM);
-            cent = plugin.virtualMic(plugin.thetaML, tSC, pM);
+            ml = plugin.virtualMic(plugin.thetaML, tSML, plugin.pM);
+            mr = plugin.virtualMic(plugin.thetaMR, tSMR, plugin.pM);
+            fl = plugin.virtualMic(plugin.thetaFL, tSFL, plugin.pF);
+            fr = plugin.virtualMic(plugin.thetaFR, tSFR, plugin.pF);
+            cent = plugin.virtualMic(plugin.thetaC, tSC, plugin.pC);
             % Set the values in the array
             plugin.ampArray = [ml mr fl fr cent];         
         end
@@ -353,6 +366,10 @@ classdef StereoPairsEmulator < audioPlugin
             plugin.dtArray = [tML tMR tFL tFR tC];
             plugin.dtArray = plugin.dtArray * plugin.sampleRate; % Convert to samples
         end
+        function removeDelayComp(plugin) % This function removes the delay compensation by finding the smalles value in dtArray and subtracting that value from every element in dtArray
+            plugin.dtArray = plugin.dtArray - min(plugin.dtArray);       
+        end
+        
     end
 end
 
