@@ -4,6 +4,8 @@ This is for a plugin that emulates a stereophonic microphone array. The emulated
 
 Currently in the middle of massive refactoring/rewriting, as the original write lacked certain key UI integrations and sprawled unnecessarily.
 
+This audio plugin is being developed as a competition entry in the 2020 AES/MatLab plugin design competition. Some design/function allowances had to be made to accomodate the 2x2 I/O limitation dictated by the competition rules.
+
 ## Mic Options
 
 This sections outlines the microphone control options.
@@ -38,3 +40,7 @@ The directivity factor of the microphone pair determines the polar pattern of ea
 * 0.5 -- Cardioid
 * 0.75 -- Hypercardioid
 * 1 -- Bidirectional
+
+#### Level
+
+Each pair has an individual level control so that the user can adjust the balance of sound between the mic pairs. The attenuation runs from 0 to -12dB. 
