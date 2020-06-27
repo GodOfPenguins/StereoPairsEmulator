@@ -1,0 +1,124 @@
+\documentclass[fleqn]{IEEEtran}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\section{Overview}
+
+	Given:
+
+	\begin{equation}
+		y = \Delta{}t + \Delta{}v
+	\end{equation}
+	
+\section{Time-Domain}
+
+	Since:
+
+	\begin{equation}
+		\Delta{}t = \frac{d_{\vec{ms}}}{c}
+	\end{equation}
+	
+	Where:
+
+	\begin{equation}
+		c = 343 \pm c_{\text{adj}}
+	\end{equation}
+	
+	\begin{equation}
+		c_{\text{adj}} = [0, 10]
+	\end{equation}
+	
+	\begin{equation}
+		\Delta{}D_{\vec{ms}} = \sqrt{(x_s - x_m)^2 + (y_s - y_m)^2}
+	\end{equation}
+	
+	Thus:
+	
+	\begin{equation}
+		\Delta{}t = \frac{
+			\sqrt{(x_s - x_m)^2 + (y_s - y_m)^2}
+			}
+			{
+			343 \pm [0,10]
+			}
+	\end{equation}
+	
+\section{Amplitude-Domain}
+	
+	If:
+
+	\begin{equation}
+		\begin{bmatrix} W \\ X \\ Y \end{bmatrix} = S *  \begin{bmatrix} \sqrt{2} \\ \cos{\Theta{}_s}\\ \sin{\Theta{}_s} \end{bmatrix}
+	\end{equation}
+	
+	And:
+	
+	\begin{equation}
+		m(\Theta, p) = (1-p)m_\text{omni} + pm_\text{bi}
+	\end{equation}
+	
+	Where:
+	
+	\begin{equation}
+		m_\text{omni} = 1
+	\end{equation}
+	
+	And:
+	
+	\begin{equation}
+		m_\text{bi} = \sin{\Theta_m} + \cos{\Theta_m }
+	\end{equation}
+	
+	Then:
+	
+	\begin{equation}
+		\Delta{}v = \begin{bmatrix} W \\ X \\ Y \end{bmatrix} * m(\Theta, p)
+	\end{equation}
+	
+	Which is:
+	
+	\begin{equation}
+		\Delta{}v = S(1 - p)\sqrt{2} + p(S\sin{\Theta_m}\sin{\Theta_s} + S\cos{\Theta_m}\cos{\Theta_s})
+	\end{equation}
+	
+	However:
+	
+	\begin{equation}
+		\Delta{}v = S(1 - p)\sqrt{2} + pS(\cos{(\Theta_m - \Theta_s)})
+	\end{equation}
+	
+	Which is:
+	
+	\begin{equation}
+		\Delta{}v = S[(1-p)\sqrt(2) + p(\cos{(\Theta_m - \Theta_s)})]
+	\end{equation}
+	
+	Thus:
+	
+	\begin{equation}
+		m(\Theta_{m-s}, p) = (1-p)\sqrt{2} + p\cos{\Theta}
+	\end{equation}
+	
+	And:
+	
+	\begin{equation}
+		\Delta{}v = S * m(\Theta_{m-s}, p)
+	\end{equation}
+
+\section{Conclusion}
+
+Therefore:
+
+	\begin{equation}
+		y[n] = n((1-p)\sqrt{2} + p\cos{\Theta}) + \hat{t}\frac{
+			\sqrt{(x_s - x_m)^2 + (y_s - y_m)^2}
+			}
+			{
+			343 \pm [0,10]
+			}
+	\end{equation}
+
+\end{document}

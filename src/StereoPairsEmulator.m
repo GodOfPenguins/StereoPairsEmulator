@@ -219,8 +219,7 @@ classdef StereoPairsEmulator < audioPlugin
         function reset(plugin) % The reset function for the plugin.
             plugin.recalcFlag = 1; % Set the plugin to recalculate information
             plugin.sampleRate = getSampleRate(plugin); % Get the sample rate
-            reset(plugin.delayLine); % Reinitialise the delay line
-            
+            reset(plugin.delayLine); % Reinitialise the delay line            
         end
     end
 end
