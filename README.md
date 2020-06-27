@@ -6,9 +6,28 @@ Currently in the middle of massive refactoring/rewriting, as the original write 
 
 This audio plugin is being developed as a competition entry in the [2020 AES/MatLab plugin design competition](http://www.aes.org/students/awards/mpsc/). Some design/function allowances had to be made to accomodate the 2x2 I/O limitation dictated by the competition rules.
 
+## Sound Source Options
+
+The sound source is placed on the virtual sound stage using a familiar, angular panning control along with a distance control. If time delay compensation and flanking/center microphones are not being used, then it is unlikely that the source distance control will be necesary and and value greater than the width of the main pair should be sufficient -- noting that a greater width between the main stereo pair correlates to a more narrow stereo recording angle.
+
+The two control options for the sound source are:
+
+* Angle
+* Distance
+
+### Angle
+
+The angle of the sound source is its deviation from the center line, rotated in a half-circle to the right or left. It is important to note that the angle is rotational, and the distance from the center-point of the microphone array is kept constant.
+
+The angle of rotation is ±90 degrees, with negative numbers representing rotation to the left, and positive numbers representing rotation to the right. This yields a potential soundstage width of 180 degrees, which should accomodate most recording needs for stereo recording.
+
+### Distance
+
+The distance of the sound source represents its distance from the center of the array. The distance is measured in meters, and ranges from 0 to 15 meters.
+
 ## Mic Options
 
-This sections outlines the microphone control options.
+The microphones are divided into the two pairs (main and flanking pairs) and a center microphone, for a total of five usable virtual microphones. The control options of the microphones are outlined below.
 
 ### Mic Pairs
 
@@ -79,4 +98,57 @@ There are two types of time-domain compensation used within the plugin: internal
 
 ### Delay compensation
 
-The delay compensation switch 
+The delay compensation switch enables time of arrival compensation between the microphones in the array and the sound source. This can be used to aid in time-delay compensation when blending a spot microphone into a recording done with a real main-array. This should be disabled unless explicity needed.
+
+### Speed of sound adjustment
+
+This allows for the user to adjust the speed of sound to account for local variations -- again, most useful for blending spot microphones into recordings using real main arrays. 
+
+This adjustment will apply to both the delay compensation and the inter-microphone time-difference calculations. The default calculations in the plugin use 343m/s as the usual speed of sound, and the adjustment parameter allows for ±10m/s of compensation. This range of adjustment should account for realistic concert hall temperture/humidity variation.
+
+### Inter-microphone time differences
+
+Internally, the plugin calcultes the time of arrival for the microphone array, and delays each microphone based on the relative distances. When the delay compensation is enabled, then the distance between each microphone and the sound source is calculated, and a per-microphone delay is used based on the distance and speed of sound.
+
+However, when the delay compensation is disabled, the inter-microphone distances area calculated and delays are based on how much further any microphone is from the closest microphone, with the closest virtual microphone not recieving any delay.
+
+The internal time adjustment for the array cannot be disabled, to maintain the presence of ITD cues.
+
+## Level Adjustment
+
+Traditionally, the spacing of microphones is considered to only have an effect on the time-of-arrival for the sound; however, for widely-spaced microphones (such as flanking mics) and/or sound source placements that considerably closer to one microphone than the others, there can be perceptable level difference based on the distance and propogation of sound pressure in the space.
+
+A notable example of this would be use the use of flanking microphones in an orchestral recording. A cello near the edge of the stage would be considerable closer to the right flank microphone than the left. This level difference resulting from the propogation of sound could be quite significant -- even to the point of becoming more prominant in localisation than the precedence effect.
+
+Actually modeling the appropriate propogation of sound to account for this is not practical for the purposes of a VST plugin, as much of the manner in which sound actually propogates depends on the sound source's facing an statistical directivity data, as well as the physical construction and dimensions of the sound stage. To account for all of these factors would be a venture into physical modelling at a level that would be unusable in most production environments, and likely far surpass the needed realism at the extreme expense of computational efficiency.
+
+Therefore, the plugin includes several different compensation options which can be used as abstractions for this effect, which can be selected based on personal preference and situational needs:
+
+* No compensation
+* Flanks only
+* Pairwise
+* Full Array
+
+There is also an option to select the amount of level adjustment.
+
+* -1.5dB
+* -3dB
+* -6dB
+
+### Flanks only
+
+In most situations where the distance-based level differences will be significant, it will be between the flanking microphones. To accomodate this difference, since the flank levels can be set independently of the mains, the option to have distance-level compensation apply only to the flanks is included, and is expected to be suitable for a majority of user needs.
+
+### Pairwise
+
+Since the inidividual parts of the array can have their levels adjusted, the second option applies level adjustment to the main and flank pairs individually. This may be helpful in some circumstances for widely spaced arrays.
+
+The level adjustment with this setting considers each pair separately. If the center microphone is used, then it will be considered part of the main array.
+
+### Full Array
+
+This setting applies the level adjustment to every microphone in the array, lowering the level based on the sound source's distance from each microphone realtive to the closest microphone from the source.
+
+### Adjustment Strength
+
+There are three options for the strength of the level adjustment, to act as abstractions for the propogation of sound under different conditions and for instruments with different directivity factors. The value listed indicates the amount of damping per doubling of distance from the sound source in decibels.
