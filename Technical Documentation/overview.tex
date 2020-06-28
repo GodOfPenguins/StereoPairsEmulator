@@ -38,7 +38,13 @@ The immidiate use-cases intended to be addressed with this specific implimentati
 
 \subsubsection{Blending monophonic encoded sources}
 
+When recording acoustic ensembles, recording engineers will frequently employ both a main stereo array and area/spot microphones. These spot microphones are used to accentuate various parts of the ensemble to difference logistical and aesthetic ends. Drawing from previous sections, stereo recording praxis and panning implimentation in DAWs do not agree on how to encode stereophonic localization cues. This can quickly lead to a situation where the sound of an instrument recorded in an ensemble with both a stereo array and spot microphone will have a mixture of time/level cues in the main array siganl, but only be localized with level cues in the panned signal from the spot microphone. Due to the differences in the perceptual effect of time and level cues, this can lead to inconsistencies in the quality of the soundfield as the dominance of the source of the instrument in the audio mix changes between the main array and the spot microphones; this may also cause inconsistency in instruments that are around the spot microphone. The use of this processor will encode the monophonic sound with time and level cues that closely match that of the main array, meaning that its localization and sense of envelopment will not change based on the dominance of the source.
 
+Following this, another context for this application of the processor is in blending a monophonic recorded source into a recording that was taken of an ensemble using a stereophonic microphone array. "Distributed recording" is not uncommon -- especially in music for media. It is not uncommon for sections of an ensemble to be recorded independently and then put together during post-production. This processor would allow for independently recorded instruments to be better blended into a larger ensemble by encoding them with the same localization cues, creating a greater qualitative unity in the resultant soundfield.
+
+This also has implications for sample-based music production and the common practice of laying samples of the same instrument family that come from different sample libraries. Commercial sample libraries 
+
+Finally, this processor can also be used in conjunction with standard post-processing artificial reverberation techniques to manufacture a sense of unity from completely independently recorded instruments. 
 
 \subsubsection{Time-domain cues in panning}
 
