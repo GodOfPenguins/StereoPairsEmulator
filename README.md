@@ -6,6 +6,8 @@ Currently in the middle of massive refactoring/rewriting, as the original write 
 
 This audio plugin is being developed as a competition entry in the [2020 AES/MatLab plugin design competition](http://www.aes.org/students/awards/mpsc/). Some design/function allowances had to be made to accomodate the 2x2 I/O limitation dictated by the competition rules.
 
+For a more detailed explaination of how this processor work, see the technical documentation.
+
 ## Sound Source Options
 
 The sound source is placed on the virtual sound stage using a familiar, angular panning control along with a distance control. If time delay compensation and flanking/center microphones are not being used, then it is unlikely that the source distance control will be necesary and and value greater than the width of the main pair should be sufficient -- noting that a greater width between the main stereo pair correlates to a more narrow stereo recording angle.
