@@ -1,0 +1,55 @@
+\subsection{The Position of the Sound Source}
+
+The position of the sound source needs to be referenced both in terms of $O$ and in terms of the position of $m$. Given $\theta_s$ and $d_S$, its position $(x,y)$ can be found through the usual conversion:
+
+\begin{equation}
+\begin{bmatrix} x_S \\ y_S \end{bmatrix} = \begin{bmatrix} \cos{\theta_S} \\ \sin{\theta_S} \end{bmatrix}
+\end{equation}
+
+Following this, finding the position of the sound source relative to the microphone, $(x,y)_{Sm}$ can be done by shifting the reference origin in terms of the position of $m$:
+
+\begin{equation}
+\begin{bmatrix} x_Sm \\ y_Sm \end{bmatrix} = \begin{bmatrix} x_S \\ y_S \end{bmatrix} + \begin{bmatrix} x_m \\ y_m \end{bmatrix}
+\end{equation}
+
+\subsection{Finding $d_{\vec{mS}}$}
+
+With the positions of the sound source and the microphones defined in the virtual space, it becomes important to define their relationships to one another. Since the encoding of the source at each microphone depends on the relationship between the source's location and the location of the microphone. These key parameters can be derived from a vector taken from the microphone to the source, $\vec{v}_m = \vec{mS}$.
+
+If follows that:
+
+\begin{equation}
+d_{\vec{v}} = \sqrt{
+(x_s - x_m)^2 + (y_s - y_m)^2
+}
+\end{equation}
+
+\subsection{Finding $\theta_{mS}$}
+
+Since a microphone's polar directivity pattern applies an amplitude scalar based on the amount of angular deflection the source is away from the forward-facing axis of the microphone, $\theta_mS$ should represent this amount of deflection. There are two different methods that can be used to find $\theta_mS$.
+
+\subsubsection{Difference in rotations}
+
+The first method is to find the angular rotation of the position of $S$ around the position of $m$, and then taking the difference of this angular rotation and the amount of rotation of the virtual microphone ($\theta_m$).
+
+\begin{equation}
+\theta_{mS} = \tan^{-1}\left(\frac{y_{Sm}}{x_{Sm}}\right) - \theta_m
+\end{equation}
+
+\subsubsection{Using linear transformations}
+
+Alternatively, the endpoint of $\vec{v}$ could be redefined by applying a rotation matrix based on $\theta_m$
+
+\begin{equation}\label{rotationMatrix}
+\begin{bmatrix} X \\ Y \end{bmatrix} = \begin{bmatrix} \cos{\theta_m} & -\sin{\theta_m} \\ \sin{\theta_m} & \cos{\theta_m} \end{bmatrix} \cdot \begin{bmatrix} x_{Sm} \\ y_{Sm} \end{bmatrix}
+\end{equation}
+
+\begin{equation}\label{arctan}
+\theta_{mS} = \tan^{-1}\left(\frac{Y}{X}\right)
+\end{equation}
+
+By combining (\ref{rotationMatrix}) and (\ref{arctan}):
+
+\begin{equation}
+\theta_{mS} = \tan^{-1}\left(\frac{x_{Sm}\sin{\theta_m} + y_{Sm}\cos{\theta_m}}{x_{Sm}\cos{\theta_m} - y_{Sm}\sin{\theta_m}}\right)
+\end{equation}
