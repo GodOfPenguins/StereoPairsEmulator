@@ -34,13 +34,13 @@ m(p,\phi) = (1-p) + p\cos(\phi)
 
 \subsubsection{Limitations in abstracting ideal microphones}
 
-It should be noted that real microphones' polar patterns are frequency-dependent, with cardioid microphones ($0 < p < 1$) becoming increasingly less directional at lower frequencies. At higher frequencies, the physical body of the microphone and the diameter of the microphone diaphragm also begin to affect in the polar response. Additionally, cardioid microphones -- due to the physical mechanics of generating a cardioid polar pattern -- tend to exhibit a marked attenuation in their frequence response at lower frequencies.
+It should be noted that real microphones' polar patterns are frequency-dependent, with cardioid microphones ($0 < p < 1$) becoming increasingly less directional at lower frequencies. At higher frequencies, the physical body of the microphone and the diameter of the microphone diaphragm also begin to affect in the polar response. Additionally, cardioid microphones -- due to the physical mechanics of generating a cardioid polar pattern -- tend to exhibit a marked attenuation in their frequency response at lower frequencies.
 
 Often, the specific color that a specific model of microphone imparts on the recorded sound is carefully chosen, with the choice of microphone being considered one of the major creative decisions in recording and the design of many microphones being intentional to support specific colorations and yield various creative options. It would be impractical to try and model the specific responses of common microphones used in main arrays, and the processing needed to apply the frequency-domain modeling would break the CPU-efficiency goal. Additionally, an attempt to reproduce the frequency-domain aspects of a stereophonic array would have the effect of distorting the (likely intentionally-chosen) frequency-domain aspects of the source recording.
 
 Thus, using virtual microphones with ideal polar patterns is likely the optimal use-case for most users. This will be with the understanding that the virtual microphone array will impart localization cues that approach that of a real microphone array, but -- due to limitations in modeling real-world physics -- will not fully replicate the cues of a real-world microphone array. However, the processor will provide localization cues that are closer than level-difference-only panning methodologies.
 
-There is one case that is worth considering. As previously noted, directional microphones tend to exhibit a marked attenuation at low-frequencies. There are some recording techniques that take advantage of this tendancy, especially since the human prioritization of localization cues is frequency-dependent. It may be desierable to include some simple high-pass and low-pass filter options within the implimentation to allow the user to emulate some of the key frequency-dependent behavior.
+There is one case that is worth considering. As previously noted, directional microphones tend to exhibit a marked attenuation at low-frequencies. There are some recording techniques that take advantage of this tendency, especially since the human prioritization of localization cues is frequency-dependent. It may be desirable to include some simple high-pass and low-pass filter options within the implementation to allow the user to emulate some of the key frequency-dependent behavior.
 
 \subsection{The User Interface}
 
@@ -62,38 +62,38 @@ Since $r$ is abstracted as meters, the user can specify the distance $r$ from po
 
 \subsubsection{Constructing the microphone array}
 
-The set of microphones in the virtual array, $M$, is some number of virtual microphones. While it is possible to define an arbitrary number of virtual microphones each at any conceivable position within the virtual space and define the algorithm in a way to accomodate, usual sterephonic recording practice, again, gives some practical limits that can be used to refine and focus the amount of controls exposed to the user and enhance the quality of the user experience.
+The set of microphones in the virtual array, $M$, is some number of virtual microphones. While it is possible to define an arbitrary number of virtual microphones each at any conceivable position within the virtual space and define the algorithm in a way to accommodate, usual stereophonic recording practice, again, gives some practical limits that can be used to refine and focus the amount of controls exposed to the user and enhance the quality of the user experience.
 
 The fundamental praxis of stereophonic recording is based on the use of a microphone pair, that translate to the raw left and right audio channels. This microphone pair is laterally spaced at some distance, and has an angular splay of some angle. This primary pair can be designated the ``main' stereo pair, $m_\text{mains}$, that has the properties of its lateral distance, $d$, angular splay, $\phi$.
 
 As discussed in the overview, it is also common to use a second pair of microphones in tandem to the first, that occupy a wider spacing. These additional microphones can be designated as the "flanks", $m_\text{flanks}$. The flank pair will have the same properties, $d$ and $\phi$, as the main pair.
 
-Finally, there is a long tradition of using a center microphone, $m_\text{center}$. Typically the center microphone does not rotate in the 2D plane; so it will only have a distance, $d$. However, for a center microphone, the displacement is forward, rather than lateral; so any value for $d_\text{center}$ will be long the $y$ axis.
+Finally, there is a long tradition of using a center microphone, $m_\text{center}$. Typically, the center microphone does not rotate in the 2D plane; so, it will only have a distance, $d$. However, for a center microphone, the displacement is forward, rather than lateral; following this, any value for $d_\text{center}$ will be long the $y$ axis.
 
-This gives a maximum size of $M$ of $n=5$, which is a managable number. These are presented to the user as two pairs and the single center microphone. The preferred ordering of the microphones within $M$ will follow the order of expected frequency of use (mains, flanks, center), and the audio-industry preference for left-right ordering of channels:
+This gives a maximum size of $M$ of $n=5$, which is a manageable number. These are presented to the user as two pairs and the single center microphone. The preferred ordering of the microphones within $M$ will follow the order of expected frequency of use (mains, flanks, center), and the audio-industry preference for left-right ordering of channels:
 
 \begin{equation}
-	M = \{m_\text{mL}, m_\text{mR}, m_\text{fL}, m_\text{fR}, m_\text{c}\}
+M = \{m_\text{mL}, m_\text{mR}, m_\text{fL}, m_\text{fR}, m_\text{c}\}
 \end{equation}
 
-The two pairs and center microphone are each switchable, so that the user can freely enable/disable any combination of them. Each microphone group also has a control exposed that applies an amplitude scalar to the signal of that group, to allow for different proportions of that group's signal into the output\footnote{Ideally, the plug-in would be able to output the individual processing of each microphone; however the format of the competition that the plug-ing was designed for limits the output channels to two.}. This scalar, $g$, has an adjustment range in decibels: $g = [-20,0]$.
+The two pairs and center microphone are each switchable, so that the user can freely enable/disable any combination of them. Each microphone group also has a control exposed that applies an amplitude scalar to the signal of that group, to allow for different proportions of that group's signal into the output\footnote{Ideally, the plug-in would be able to output the individual processing of each microphone; however the format of the competition that the plug-in was designed for limits the output channels to two.}. This scalar, $g$, has an adjustment range in decibels: $g = [-20,0]$.
 
 \subsubsection{Identifying virtual microphone distance limits}
 
-Identifying practical limits for the $d$ value for the two pairs will require a bit of arbitrary demarcation. The main pair must allow for a minimum of $d_\text{mains}=0$ to accomodate coincident microphone techniques. Likewise, for flexibility and simplicity there is little reason not to allow $d_\text{flanks} = 0$ (though it would an odd use-case for this value to be used). For the center microphone, while it is common in many cases for it to be displaced forward, there are also a number of cases that require it to remain in-line with adjacent pairs; so a minimum value of $d_\text{center} = 0$ is also necessary to accomodate all reasonable use-cases.
+Identifying practical limits for the $d$ value for the two pairs will require a bit of arbitrary demarcation. The main pair must allow for a minimum of $d_\text{mains}=0$ to accommodate coincident microphone techniques. Likewise, for flexibility and simplicity there is little reason not to allow $d_\text{flanks} = 0$ (though it would an odd use-case for this value to be used). For the center microphone, while it is common in many cases for it to be displaced forward, there are also a number of cases that require it to remain in-line with adjacent pairs; so a minimum value of $d_\text{center} = 0$ is also necessary to accommodate all reasonable use-cases.
 
-For maximal allowed values, and examination of the literature shows that main mic pairs usually occure in spaces smaller than 100cm, however triplets can employ rather wide distances, with ``typical'' Decca-tree configurations spanning 2m. The current implementation allows for a maximal span of 3m to accomodate some extra working room for three-microphone expanded configurations, additionally, due to the common use of $d < 1m$, the values for $d_\text{mains}$ are presented to the user in centimeters; this gives $0 \leq d_\text{mains} \leq 300$ as the total range for the mains' lateral distance.
+For maximal allowed values, and examination of the literature shows that main mic pairs usually occur in spaces smaller than 100cm, however triplets can employ rather wide distances, with ``typical'' Decca-tree configurations spanning 2m. The current implementation allows for a maximal span of 3m to accommodate some extra working room for three-microphone expanded configurations, additionally, due to the common use of $d < 1m$, the values for $d_\text{mains}$ are presented to the user in centimeters; this gives $0 \leq d_\text{mains} \leq 300$ as the total range for the mains' lateral distance.
 
-After an informal poll and discussion with several sound recordists who specialize in acoustic ensemble recording, a upper limit of 10m was chosen for the flanking pair. This gives $0 \leq d_\text{flanks} \leq 10$ as the total range for the flanks' lateral distance, and this presented to the user in meters.
+After an informal poll and discussion with several sound recordists who specialize in acoustic ensemble recording, an upper limit of 10m was chosen for the flanking pair. This gives $0 \leq d_\text{flanks} \leq 10$ as the total range for the flanks' lateral distance, and this presented to the user in meters.
 
-Finally, the maximum amount of forward displacement for the center microphone is was set to $d_\text{center} = 100$ in centimeters. Common uses of an forward-set center microphone are under this threshold, and the 100cm point allows for a round number as the limit and offers some extra distance as a buffer to catch reasonable outliers.
+Finally, the maximum amount of forward displacement for the center microphone is was set to $d_\text{center} = 100$ in centimeters. Common uses of a forward-set center microphone are under this threshold, and the 100cm point allows for a round number as the limit and offers some extra distance as a buffer to catch reasonable outliers.
 
 \subsubsection{Microphone UI parameter conversion to values for calculation}
 
 A key aspect of many stereophonic recording arrays is bilateral symmetry. Hence the focus on pairs of microphones and defining them in terms of their mutual distance and angular splay. Because of this, it can be assumed that for any of the paired microphones:
 
 \begin{equation}
-	d_{\vec{mO}} = \frac{d_m}{2}
+d_{\vec{mO}} = \frac{d_m}{2}
 \end{equation}
 
 Since the standard abstracted unit of measure in the virtual space is a meter, the distances for the center microphone and the main pair will need to be converted from the centimeter presentation to the user. Since every microphone only moves along one axis, and does not cross the origin, its position along the other axis will remain fixed at $0$. For the pairs of microphones, the symmetry at the $y$-axis means that the left microphone of each pair will remain in the span $d_L \leq 0$ whereas the right microphone in each pair will be within the span $d_R \geq 0$.
@@ -101,7 +101,7 @@ Since the standard abstracted unit of measure in the virtual space is a meter, t
 Thus, for the pairs of microphones:
 
 \begin{equation}
-	\begin{bmatrix} x_L \\ x_R \end{bmatrix} = C0.5 \begin{bmatrix} -d_m \\ +d_m \end{bmatrix}
+\begin{bmatrix} x_L \\ x_R \end{bmatrix} = C0.5 \begin{bmatrix} -d_m \\ +d_m \end{bmatrix}
 \end{equation}
 
 Where $C$ is the unit conversion constant: $C_\text{mains} = 0.01$ and $C_\text{flanks} = 1$.
@@ -109,13 +109,13 @@ Where $C$ is the unit conversion constant: $C_\text{mains} = 0.01$ and $C_\text{
 The value of $d_c$ can be directly converted into meters, and used as the $y$-coordinate value for the center microphone:
 
 \begin{equation}
-	x_c = 0.01d_m
+x_c = 0.01d_m
 \end{equation}
 
-For the angular splay values of the microphone pairs a similar conversion can be used. Since the angular splay value is the angle between the microphones, the deflection from forward can be found by halving the angular splay. Since perceptual forward is at an angular rotation of $\frac{\pi}{2}$,  the left and right microphones' rotation values can be found by adding or subtracting the deflection value (converted to radians) from $\frac{\pi}{2}$:
+For the angular splay values of the microphone pairs a similar conversion can be used. Since the angular splay value is the angle between the microphones, the deflection from forward can be found by halving the angular splay. Since perceptual forward is at an angular rotation of $\frac{\pi}{2}$, the left and right microphones' rotation values can be found by adding or subtracting the deflection value (converted to radians) from $\frac{\pi}{2}$:
 
 \begin{equation}
-	\begin{bmatrix} \theta_L \\ \theta_R \end{bmatrix} = \frac{\phi\pi}{360}J_{2,1} + \begin{bmatrix} +\frac{\pi}{2} \\ -\frac{\pi}{2} \end{bmatrix}
+\begin{bmatrix} \theta_L \\ \theta_R \end{bmatrix} = \frac{\phi\pi}{360}J_{2,1} + \begin{bmatrix} +\frac{\pi}{2} \\ -\frac{\pi}{2} \end{bmatrix}
 \end{equation}
 
 Where $\phi$ is the angular splay value in degrees and $J$ is a matrix of ones.
