@@ -39,6 +39,7 @@ The main and flanking mic pairs are controlled as pairs with their functions ope
 * Distance
 * Directivity
 * Level
+* Width
 * Enable
 
 #### Angular Splay
@@ -70,6 +71,10 @@ The directivity factor of the microphone pair determines the polar pattern of ea
 #### Gain trim
 
 Each pair has an individual gain control so that the user can adjust the balance of sound between the mic pairs. The attenuation runs from 0 to -12dB. Please ensure proper gain-staging entering the plug-in as the internal trim is (necessarily) applied post-processing.
+
+#### Width
+
+The width control controls the amount of outward panning for the microphones. This is not equivalent to stereo widening, rather this is just an abstraction of a standard panning knob pair. Turning the width to its maximum value is the equivalent of "hard panning" the two virtual microphones left and right, while turning the value to its minimum value is the equivalent of center panning both microphones.
 
 #### Enable
 
