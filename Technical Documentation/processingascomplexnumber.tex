@@ -3,7 +3,7 @@
 The transfer function that a virtual microphone applies to the signal is applied in the time and amplitude domains. This can be represented as a complex number in the form:
 
 \begin{equation}\label{vMicFunction}
-	m(S) = \Delta{}v + \Delta{}t
+m(S) = \Delta{}v + \Delta{}t
 \end{equation}
 
 Where $\Delta v$ is the change in amplitude, and $\Delta t$ is the change in time
@@ -18,58 +18,66 @@ Where $\Delta v$ is the change in amplitude, and $\Delta t$ is the change in tim
 
 \subsection{$M(S)$ Array processing}
 
+It then follows that the complex-number formulation of the function $m(S)$ can be written out:
+
+\begin{equation}
+	m(S) = S\left[\left(1 - p_m\right) + p\cos(\theta_{mS})\right] + \hat{t}
+\end{equation}
+
+Which is comprised of two components: the adjusted amplitude of $S$, and the time-domain shift of $S$.
+
 The virtual microphone function (\ref{vMicFunction}) can be applied for each element in $M$ to find the effect of the total microphone array:
 
 \begin{equation}
-	M(S) = \{m_1(S) ... m_n(S)\}
+M(S) = \{m_1(S) ... m_n(S)\}
 \end{equation}
 
 The elements of $M(S)$ can be apportioned to the mixdown channels following:
 
 \begin{equation}\label{output}
-	\begin{bmatrix} L(M(S)_n) \\ R(M(S)_n) \end{bmatrix} = gM(S)_n \begin{bmatrix} k_L \\ k_R \end{bmatrix}
+\begin{bmatrix} L(M(S)_n) \\ R(M(S)_n) \end{bmatrix} = gM(S)_n \begin{bmatrix} k_L \\ k_R \end{bmatrix}
 \end{equation}
 
-Where $g$ is a scalar constant, and $k_L$ and $k_R$ are related proportionality constants to determine the level of of the element $M(S)_n$ within the encoded left and right channels. 
+Where $g$ is a scalar constant, and $k_L$ and $k_R$ are related proportionality constants to determine the level of the element $M(S)_n$ within the encoded left and right channels. 
 
-\subsubsection{Output implimentation}
+\subsubsection{Output implementation}
 
-For purposes of this implimentation, $g$ is a scalar value applied per pair (or to the center microphone). The proportionality constants $k$ for the flanks follow a standard sine-cosine panning function. The center microphone uses $k = 1$.
+For purposes of this implementation, $g$ is a scalar value applied per pair (or to the center microphone). The proportionality constants $k$ for the flanks follow a standard sine-cosine panning function. The center microphone uses $k = 1$.
 
 The $g$ scalar is exposed to the user as a value $\alpha$, where $\alpha$ is a number in decibels and $\alpha = [-20,0]$.
 
 Converting $\alpha_m$ to a scalar $g_m$ can be done:
 
 \begin{equation}
-	g_m = 10^{\frac{\alpha}{20}}
+g_m = 10^{\frac{\alpha}{20}}
 \end{equation}
 
 For the apportionment of the signal to the mixdown channels, the user inputs a value, $\beta$, where $\beta = [0, 1]$. The value for $\beta$ is used to indicate the separation of the virtual microphone pair into their corresponding mixdown channels. Lower values of $\beta$ indicate that both microphones in the pair should increasingly come out of both mixdown channels; whereas higher values indicate more separation into their corresponding channel. The relationship with $k$ can be shown as:
 
 \begin{equation}\label{pairsPanning}
-	\begin{bmatrix} k_1 \\ k_2 \end{bmatrix} =  \begin{bmatrix} \sin{k(\beta)} \\ \cos{k(\beta)} \end{bmatrix} \; | \; k(\beta) = \beta\frac{pi}{4} + \frac{pi}{4}
+\begin{bmatrix} k_1 \\ k_2 \end{bmatrix} = \begin{bmatrix} \sin{k(\beta)} \\ \cos{k(\beta)} \end{bmatrix} \; | \; k(\beta) = \beta\frac{pi}{4} + \frac{pi}{4}
 \end{equation}
 
 Following this, for any virtual microphone pair in $M$, the placement of the encoded sounds within the output mixdown follows:
 
 \begin{equation}\label{centerPanning}
-	\begin{bmatrix} y(L) \\ y(R) \end{bmatrix} =  \begin{bmatrix} \sin{k(\beta)} & \cos{k(\beta)} \\ \cos{k(\beta)} & \sin{k(\beta)}  \end{bmatrix} \cdot g\begin{bmatrix} m(S)_L \\ m(S)_R \end{bmatrix}
+\begin{bmatrix} y(L) \\ y(R) \end{bmatrix} = \begin{bmatrix} \sin{k(\beta)} & \cos{k(\beta)} \\ \cos{k(\beta)} & \sin{k(\beta)} \end{bmatrix} \cdot g\begin{bmatrix} m(S)_L \\ m(S)_R \end{bmatrix}
 \end{equation}
 
-While $m(S)_center$ is simply:
+While $m(S)_{center}$ is simply:
 
 \begin{equation}
-	\begin{bmatrix} y(L) \\ y(R) \end{bmatrix} = gm(S)_{c}J_{2,1}
+\begin{bmatrix} y(L) \\ y(R) \end{bmatrix} = gm(S)_{c}J_{2,1}
 \end{equation}
 
-Thus the final, encoded output of the processor can be represented as:
+Thus, the final, encoded output of the processor can be represented as:
 
-\begin{equation}
-	y(M, S) =  \sum\limits_{i=1}^{|M|} y(M(S)_i)
+\begin{equation}\label{output}
+y(M, S) = \sum\limits_{i=1}^{|M|} y(M(S)_i)
 \end{equation}
 
-Which, when taken with the relationship with the UI in (\ref{pairsPanning}) and (\ref{centerPanning}) can be expanded out to:
+Which, when taken with the relationship to the UI in (\ref{pairsPanning}) and (\ref{centerPanning}), (\ref{output}) can be expanded to:
 
 \begin{equation}
-	y(M, S) = \begin{bmatrix} y(L)_\text{mains} \\ y(R)_\text{mains} \end{bmatrix} + \begin{bmatrix} y(L)_\text{flanks} \\ y(R)_\text{flanks} \end{bmatrix} + \begin{bmatrix} y(L)_\text{center} \\ y(R)_\text{center} \end{bmatrix}
+y(M, S) = \begin{bmatrix} y(L)_\text{mains} \\ y(R)_\text{mains} \end{bmatrix} + \begin{bmatrix} y(L)_\text{flanks} \\ y(R)_\text{flanks} \end{bmatrix} + \begin{bmatrix} y(L)_\text{center} \\ y(R)_\text{center} \end{bmatrix}
 \end{equation}

@@ -1,1 +1,13 @@
-meow
+The $\Delta{}V$ component of the function $m(S)$ if based off of the positional relationships of the virtual microphone and the virtual sound source, and the polar attenuation pattern setting of the microphone. The transfer function defined by this relationship can be found as a function of $\theta_{mS}$, $v(\theta_{mS})$. Recalling the polar pattern equation from (\ref{polarPatternPlot}), a virtual microphone can be seen as consisting of two components: a nondirectional component, and a bidirectional component\footnote{This mirrors the construction of some types of real directional microphones.}. Following this, by replacing $\phi$ in (\ref{polarPatternPlot}) with $\theta_{mS}$, the resulting function, $m(\theta_{mS}, p_m)$, can be used to find the amplitude scalar that represents the magnitude of the effect of the virtual microphone's polar attenuation pattern on the source signal, $S$, when $S$ is at the relative angle represented by $\theta_{mS}$.
+
+Therefore, $\Delta{}v$ can be found as the product of the source signal and the angle-dependent scalar coefficient:
+
+\begin{equation}
+\Delta{}v_m = S \cdot m(\theta_{mS}, p_m)
+\end{equation}
+
+Which can rewritten more explicity as:
+
+\begin{equation}
+\Delta{}v_m = S\left[ \left(1 - p_m\right) + p_m\cos(\theta_{mS}) \right]
+\end{equation}
