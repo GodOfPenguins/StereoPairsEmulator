@@ -2,4 +2,20 @@ The $\Delta{}t$ component represents the time that it takes for the sound emitte
 
 \subsubsection{Calculating the speed of sound}
 
-The speed of sound in real spaces is generally considered to be ~\SI[per-mode=fraction]{343}{\m\per\s}. 
+The speed of sound in real spaces is generally considered to be ~\SI[per-mode=fraction]{343}{\m\per\s}. However, it is not a constant. The speed of sound can change based on a number of environmental parameters. To account for this, the speed of sound can be adjusted by some value, $\Delta{}c$, which is implemented in this version as a number $\Delta{}c = [-10, 10]$; so that:
+
+\begin{equation}\label{speedofsound}
+c = 343 + \Delta{}c
+\end{equation}
+
+Following the usual formula for time:
+
+\begin{equation}\label{timeFormula}
+t = \frac{d}{c}
+\end{equation}
+
+Substitutions can be made based on (\ref{distance}) and (\ref{speedofsound}) to give the expansion of $\Delta{}t$:
+
+\begin{equation}\label{deltat}
+\Delta{}t = \frac{d_{\vec{v}}}{343 + \Delta{}c}
+\end{equation}

@@ -1,0 +1,14 @@
+The program needs to be able to provide time delay compensation for a sound source, as well as be able to only provide intermicrophone time of arrival cues. The method previously outlined for defining $\Delta{}t$ will compensate for the ``time of flight'' delay based on the speed of sound to each microphone. However, a case needs to be defined for when this is not desired behaviour, and no time adjustment is desired.
+
+Setting $\Delta{}t = 0$ would mean the removal of all time-domain cues from the encoding, instead the smallest distance for any microphone to the sound source, $d_{\vec{j}}$ where $j \in M \; | \; d_{\vec{j}} \leq d_{\vec{i}} , \forall{}i \in M$, can be subtracted from $d_{\vec{v}}$.
+
+Using a user-definable boolean parameter, $\delta$, the solution for $\Delta{}t$ can be expanded into two cases:
+
+\begin{equation}
+\Delta{}t = \begin{cases}
+\frac{d_{\vec{v}}}{343 + \Delta{}c} \; & \text{if } \delta = 0 
+\\[12pt]
+\frac{d_{\vec{v}} - d_{\vec{j}}}{343 + \Delta{}c} \; & \text{if } \delta = 1
+\end{cases}
+\end{equation}
+
