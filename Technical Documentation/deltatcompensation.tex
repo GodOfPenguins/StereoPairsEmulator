@@ -2,7 +2,7 @@ The program needs to be able to provide time delay compensation for a sound sour
 
 Setting $\Delta{}t = 0$ would mean the removal of all time-domain cues from the encoding, instead the smallest distance for any microphone to the sound source, $d_{\vec{j}}$ where $j \in M \; | \; d_{\vec{j}} \leq d_{\vec{i}} , \forall{}i \in M$, can be subtracted from $d_{\vec{v}}$.
 
-Using a user-definable boolean parameter, $\delta$, the solution for $\Delta{}t$ can be expanded into two cases:
+Using a user-definable boolean parameter, $\delta$, the solution for $\Delta{}t$ can be expanded into two cases\footnote{Mathematically, the simplified expression $\Delta{}t = \frac{d_{\vec{v}} - \delta{}d_{\vec{j}}}{343 + \Delta{}c}$ could be used, computationally this implies finding the value of $d_{\vec{j}}$ each time the expression is evaluated.}:
 
 \begin{equation}
 \Delta{}t = \begin{cases}
@@ -11,4 +11,15 @@ Using a user-definable boolean parameter, $\delta$, the solution for $\Delta{}t$
 \frac{d_{\vec{v}} - d_{\vec{j}}}{343 + \Delta{}c} \; & \text{if } \delta = 1
 \end{cases}
 \end{equation}
+
+This gives a formulation of:
+
+\begin{equation}
+m(S) = S\left[\left(1 - p_m\right) + p\cos(\theta_{mS})\right] + \hat{t}
+\begin{cases}
+\frac{d_{\vec{v}}}{343 + \Delta{}c} & \text{if } \delta = 1 \\[10pt]
+\frac{d_{\vec{v}} - d_{\vec{j}}}{343 + \Delta{}c} & \text{if } \delta = 0
+\end {cases}
+\end{equation}
+
 

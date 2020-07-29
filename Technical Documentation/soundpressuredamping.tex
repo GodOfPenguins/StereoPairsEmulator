@@ -1,0 +1,82 @@
+Standard stereo recording practice typically considered the damping of sound with distance to not be a consideration in the effect of a stereo recording array. However, there are cases where the damping of sound between microphones may be a non-trivial consideration. This effect is typically more pronounced in the flanking microphones when used, however may be a consideration for wider-set main arrays as well.
+
+Confounding this are issues with accurately modelling the emission and propagation of sound. As previously mentioned, the goal is not a physical model, but a practically useable abstraction. To this end, a model that includes a perceptually accurate representation of the significant effect of the phenomena is sufficient, even if the detail is lacking.
+
+To represent an abstraction of the propagation of sound and its damping with distance, three different damping compensation arrangements have been implemented. To abstract the actual propagation of sound with respect to an real source's statistical directivity pattern and facing, an additional parameter can be introduced that affects the amount of damping with distance. Accompanying this, a Boolean parameter, $\gamma$ is introduced to allow the user to enable or disable the $\Delta{l}$ calculation.
+
+This gives the expansion of $m(S)$ to:
+
+\begin{equation}
+m(S) = \left(\begin{cases}
+\Delta{v} \cdot \Delta{l} & \; \text{if} \; \gamma = 1 \\
+\Delta{v} &\; \text{if} \; \gamma = 0
+\end{cases}\right)
++ \Delta{t}
+\end{equation}
+
+Noting that $\Delta{v}$ and $\Delta{l}$ should be in the form of amplitude scalars, rather than decibel amounts\footnote{Decibels amounts would need to be summed rather than multiplied.}
+
+\subsection {Sound Damping Formula}
+
+If there are two points in a free-field space, each a distance of $r$ from a sound source, and if we know the sound pressure level in decibels, $l$, at one of the points: then the sound pressure level at the other distance can be calculated as:
+
+\begin{equation}
+l_2 = l_1 - \left|20 \cdot \log_{10}\frac{r_1}{r_2}\right|
+\end{equation}
+
+Substituting the positions of the virtual microphone and sound source into the formula, and assuming that the microphone's signal is measured at a unit distance of one, the level at a virtual microphone can be found as:
+
+\begin{equation}
+l_m = l_S - \left|20 \cdot \log_{10}\frac{1}{d_{\vec{v}}}\right|
+\end{equation}
+
+From this, the damping amount at the microphone's distance from the sound source is simply:
+
+\begin{equation}
+\Delta{l}_m = 20 \cdot\log_{10}(d_{\vec{v}})
+\end{equation}
+
+As previously discussed, the actual damping amount displayed by a sound source in practice also depends on the directivity of the source and the acoustic environment. The most expedient method for reducing the amount of damping with distance, is to reduce the value of the multiplier for the $\log$ function in the calculation. This can be done by replacing the multiplier with a user-adjustable parameter, $\sigma$ from the multiplier, where $\sigma \in [0,20]$. To simplify the user-experience, this implementation uses $\sigma \in \{5, 10, 20\}$ which corresponds with a 1.5dB, 3dB, and 6dB amount of damping per doubling of distance.
+
+\begin{equation}\label{distancedamping}
+\Delta{l}_m = \sigma\cdot\log_{10}(d_{\vec{v}})
+\end{equation}
+
+Finally, this can be converted to an amplitude scalar value following the usual conversion\footnote{See (\ref{dbscalarconvert})}:
+
+\begin{equation}
+\Delta{l}_m= -10^{\frac{\Delta{l}_m}{20}}
+\end{equation}
+
+\subsection{Implementing $\Delta{l}$ Correction}
+
+For aesthetic/artistic reasons, a direct modeling of the propagation of sound is likely to be undesirable. Additionally, it may even defeat the purpose in the near-capture of the real sound source. To this end there are two processing considerations made in the model: the actual distance-damping that is compensated for and the specific virtual microphones to which the $\Delta{l}$ correction is applied.
+
+\subsubsection{Correction Amount}
+
+It is unnecessary to apply the full amount of $\Delta{l}$ to the virtual microphones. The damping due to the distance between the source and the nearest microphone serves no artistic purpose in modelling, and will only cause the mixing engineer to have to (re)adjust the aesthetic balance of the recorded track. Thus, the compensation only needs to be applied for the distance differences between the microphones.
+
+This can be done simply by finding the smallest value for $l$ in the set of virtual microphones, and subtracting that number from every other microphone. If $j \in M \;|\; \Delta{l}_j \leq \Delta{l}_i, \forall i \in M$, then the distance-damping formula (\ref{distancedamping}) is redefined as the intermediate value $\Delta{l}_m$, and the function $\Delta{l}(m)$ becoming:
+
+\begin{equation}
+\Delta{l}(m) = \Delta{l}_m - \Delta{l}_j
+\end{equation}
+
+\subsubsection{Microphone relationships}
+
+Depending on the musical context, it may or may not be desirable to consider the damping effect on the full microphone array. Three different arrangements are considered by breaking the microphone array into two parts: $M = W \cup U \;|\; W = \left\{m_c, m_{mL}, m_{mR}\right\}, U = \left\{m_{fL}, m_{fR}\right\}$. These four options are (1) damping applied to $M$, (2) damping applied to $W$ and $F$ independently, and (3) damping only applied to $F$. To facilitate this, the user-settable parameter can be defined so that $\gamma \in \{0, 1, 2, 3\}$, and $\Delta{l}_j$ is taken from the same subset as $\Delta{l}_m$:
+
+\begin{equation}
+\Delta{l}(m) = \begin{cases}
+\text{for}\; \gamma = 0:\Delta{l}_m \\
+\text{for}\; \gamma = 1:\Delta{l}_m - \Delta{l}_j\\
+\text{for}\; \gamma = 2:\begin{cases}
+\Delta{l}_m - \Delta{i}_j \; &\text{if}\; m\land{}j\in{}W\\
+\Delta{l}_m - \Delta{i}_j \; &\text{if}\; m\land{}j\in{}U
+\end{cases}\\
+\text{for}\; \gamma = 3:\begin{cases}
+\Delta{l}_m \; &\text{if}\;\Delta{l}_m\in{}W\\
+\Delta{l}_m - \Delta{l}_j \; &\text{if}\;m\in{}U \;|\; j\in{}U
+\end{cases}
+\end{cases}
+\end{equation}
