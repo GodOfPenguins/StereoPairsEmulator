@@ -1,0 +1,16 @@
+function pair = getMicPair(mDistance, sCoord, mSplay, p, c)
+%GETMICPAIR Summary of this function goes here
+%   Detailed explanation goes here
+
+
+
+thetaL = splayConversion(mSplay);
+thetaR = -thetaL;
+
+mic1 = getMicTransferFunction(mic1Coord, sCoord, thetaL, p, c);
+mic2 = getMicTransferFunction(mic2Coord, sCoord, thetaR, p, c);
+
+pair = [mic1, mic2];
+
+end
+

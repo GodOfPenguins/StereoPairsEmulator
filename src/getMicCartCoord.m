@@ -1,10 +1,13 @@
-function pos = getMicCartCoord(distance, isCenter)
-    if isCenter
-        x = 0;
-        y = distance;
-    else
-        x = distance;
-        y = 0;
-    end
-    pos = [x,y];
+function [posL, posR] = getMicCartCoord(distance)
+%GETMICCARDCOORD converts a mic from a pair to cartesian coord
+% This only works for the main/flanks. Make sure the distance is in m and
+% not cm.
+
+    d = distance / 2;
+    xL = -d;
+    xR = d;
+    y = 0;
+    
+    posL = [xL y];
+    posR = [xR, y];
 end

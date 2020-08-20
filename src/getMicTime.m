@@ -4,7 +4,7 @@ function time = getMicTime(mCoord, sCoord, c)
 %   returns the microphone's time-domain value in milliseconds. 
 
 d = getDistance(mCoord, sCoord);
-time = distanceTimeConversion(d, c);
+time = distanceTimeConverstion(d, c);
 
 end
 

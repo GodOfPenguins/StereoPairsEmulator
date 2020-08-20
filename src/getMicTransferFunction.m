@@ -1,4 +1,4 @@
-function [time,mag] = getMicTransferFunction(mCoord, sCoord, p, c)
+function vals = getMicTransferFunction(mCoord, sCoord, splay, p, c)
 %GETMICTRANSFERFUNCTION Gets the time and amplitude scalars for the virtual
 %microphone
 %   This class takes in the microphone and source coordinate data, polar
@@ -6,7 +6,8 @@ function [time,mag] = getMicTransferFunction(mCoord, sCoord, p, c)
 %   dispalcements for the virtual microphone.
 
 time = getMicTime(mCoord, sCoord, c);
-mag = getMicAmplitudeScalar(mCoord, sCoord, p);
+mag = getMicAmplitudeScalar(mCoord, sCoord, splay, p);
 
+vals = [time;mag];
 end
 
