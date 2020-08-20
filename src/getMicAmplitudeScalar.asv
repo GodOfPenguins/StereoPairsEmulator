@@ -1,6 +1,0 @@
-function scalar = getMicAmplitudeScalar(mCoord, sCoord, p)
-%GETMICAMPLITUDESCALAR gets the amplitude scalar for a mic
-%   Detailed explanation goes here
-
-end
-
