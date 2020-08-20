@@ -213,7 +213,7 @@ classdef StereoPairsEmulator < audioPlugin
             'InitialConditions',0 ...
         ); 
         end
-        function out = process(plugin, in) %actual processing here
+        function out = process(plugin, in) %Actual processing here
             out = in;
         end
         function reset(plugin) % The reset function for the plugin.
