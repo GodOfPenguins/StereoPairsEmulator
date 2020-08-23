@@ -1,6 +1,6 @@
 function [aL, aR] = splayConversion(angle)
-    rad = deg2rad(angle) + (pi/2);
-    splay = rad / 2;
-    aL = splay;
-    aR = -splay;
+    splay  = deg2rad(angle) / 2;
+    hpi = 1.57079632679;
+    aL = hpi + splay;
+    aR = hpi - splay;
 end
