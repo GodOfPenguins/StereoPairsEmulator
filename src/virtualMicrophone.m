@@ -3,7 +3,7 @@ function vMic = virtualMicrophone(p, theta)
 end
 
 function o = omniMic(p)
-    o = (1 - p) * 1.41421356237; % (1-p) * sqrt(2)
+    o = (1 - p);
 end
 
 function b = biMic(p, theta)
