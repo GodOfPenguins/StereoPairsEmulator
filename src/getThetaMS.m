@@ -4,6 +4,6 @@
 % positions on the virtual sound stage.
 function theta = getThetaMS(micPosXY, sourcePosXY)
     x = micPosXY(1) - sourcePosXY(1);
-    y = micPosXY(2) - sourcePosXY(1);
+    y = micPosXY(2) - sourcePosXY(2);
     theta = atan2(y, x);
 end
