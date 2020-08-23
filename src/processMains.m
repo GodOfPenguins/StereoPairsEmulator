@@ -12,6 +12,8 @@ else
     vals = [1000 0];
 end
 
+[time, scalar] = vals;
+
 
 
 end
