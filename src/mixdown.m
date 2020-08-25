@@ -5,8 +5,8 @@ function output = mixdown(signal,scalars)
 %   input signal by the L and R scalars and then sums the mic audio
 %   channels within each stereo channel together.
 
-audioL = signal .* scalars(1)
-audioR = signal .* scalars(2)
+audioL = signal .* scalars(1);
+audioR = signal .* scalars(2);
 
 L = sum(audioL,2);
 R = sum(audioR,2);
