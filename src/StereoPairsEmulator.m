@@ -46,17 +46,17 @@ classdef StereoPairsEmulator < audioPlugin
     properties
         sampleRate = 48000; % default sample rate
         delayLine;
-        micScalarArray;
-        micTimeArray;
-        micMixArray;
-        micPanArray;
-        micOutputScalars;
-        dampingScalars;
+        micScalarArray = [0 0 0 0 0];
+        micTimeArray = [0 0 0 0 0];
+        micMixArray = [0 0 0];
+        micPanArray = [0 0 0 0];
+        micOutputScalars = [0 0 0 0 0; 0 0 0 0 0];
+        dampingScalars = [0 0 0 0 0];
+        recalcFlag = 1;
+        lpCalcFlag = 1;
+        mixCalcFlag = 1;
     end
     properties(Dependent)
-        recalcFlag;
-        lpCalcFlag;
-        mixCalcFlag;
         sourcePos;
         speedOfSound;
         mDistArray;
@@ -68,8 +68,7 @@ classdef StereoPairsEmulator < audioPlugin
         centerLevel;
         mainPan;
         flankPan;
-        centerPan;
-        
+        centerPan;        
     end
     properties(Constant)
         PluginInterface = audioPluginInterface(...
@@ -158,7 +157,7 @@ classdef StereoPairsEmulator < audioPlugin
                 'DisplayName','Level',...
                 'Mapping',{'pow',1/3,-20,0},... % This range could be wider, but for mixing, this is probably the most realistically useful range. Any lower than -20 and the mics should just be turned off.
                 'Style','vslider',...
-                'Layout',[16,1;20,2],...
+                'Layout',[16,1;19,2],...
                 'DisplayNameLocation','Above',...
                 'Label','dB'...
             ),...
@@ -166,7 +165,7 @@ classdef StereoPairsEmulator < audioPlugin
                 'DisplayName','Level',...
                 'Mapping',{'pow',1/3,-20,0},...
                 'Style','vslider',...
-                'Layout',[16,4;20,5],...
+                'Layout',[16,4;19,5],...
                 'DisplayNameLocation','Above',...
                 'Label','dB'...
             ),...
@@ -174,7 +173,7 @@ classdef StereoPairsEmulator < audioPlugin
                 'DisplayName','Level',...
                 'Mapping',{'pow',1/3,-20,0},...
                 'Style','vslider',...
-                'Layout',[16,7;20,8],...
+                'Layout',[16,7;19,8],...
                 'DisplayNameLocation','Above',...
                 'Label','dB'...
             ),...
@@ -275,7 +274,7 @@ classdef StereoPairsEmulator < audioPlugin
                     plugin.sampleRate);
                 % Adjust for time of arrival correction if not in use
                 if plugin.useDistCompensation == false
-                    plugin.micTimeArray = adjTimeArray(plugin.micTimeArray);
+                    plugin.micTimeArray = timeOfArrivalAdjustment(plugin.micTimeArray);
                 end          
                 plugin.recalcFlag = 0; % Turn off the recalculation flag once it's done.
             end
@@ -302,14 +301,14 @@ classdef StereoPairsEmulator < audioPlugin
             end
             % Audio processing
             delayOut = plugin.delayLine([in in in in in], plugin.micTimeArray); % Delayline I/O
-            scaleOut = mixdown(delayOut, plugin.mixOutputScalars); % Apply the scalars
+            scaleOut = mixdown(delayOut, plugin.micOutputScalars); % Apply the scalars
             % Output
             out = scaleOut;
         end
         % ------ Properties setters ------
         % All the setters!!!
         function set.mainsSplay(plugin, val)
-            plugin.mainSplay = val;
+            plugin.mainsSplay = val;
             plugin.recalcFlag = 1; % This consistently raises a warning, but it shouldn't (?) be a problem...
         end
         function set.flanksSplay(plugin, val)
