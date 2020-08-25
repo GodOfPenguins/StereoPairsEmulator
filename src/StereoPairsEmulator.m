@@ -312,12 +312,16 @@ classdef StereoPairsEmulator < audioPlugin
         end
         function set.gainMains(plugin, val)
             plugin.gainMains = val;
+            plugin.micMixArray(1) = db2mag(val);
         end
         function set.gainFlanks(plugin, val)
             plugin.gainFlanks = val;
+            plugin.micMixArray(2) = db2mag(val);
+
         end
         function set.gainCenter(plugin, val)
             plugin.gainCenter = val;
+            plugin.micMixArray(3) = db2mag(val);
         end
         function set.useMains(plugin, val)
             plugin.useMains = val;
