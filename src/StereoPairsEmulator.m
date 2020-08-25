@@ -403,3 +403,6 @@ classdef StereoPairsEmulator < audioPlugin
         end
     end
 end
+
+
+        
