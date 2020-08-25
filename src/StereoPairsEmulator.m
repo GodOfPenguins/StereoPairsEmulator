@@ -277,15 +277,14 @@ classdef StereoPairsEmulator < audioPlugin
             if plugin.lpCalcFlag == 1
                 plugin.micMixArray = db2mag([plugin.gainMains, plugin.gainFlanks, plugin.gainCenter]);
                 plugin.micPanArray = [calculatePairWidth(plugin.mainsWidth), calculatePairWidth(plugin.flanksWidth)];
-                
+                plugin.micOutputScalars = getMicArrayStereoOutputScalars(plugin.micScalarArray, plugin.micPanArray, plugin.micMixArray);
                 plugin.lpCalcFlag = 0;    
             end
             % Audio processing
             delayOut = plugin.delayLine([in in in in in], plugin.micTimeArray); % Delayline I/O
-
-
+            scaleOut = mixdown(delayOut, plugin.mixOutputScalars); % Apply the scalars
             % Output
-            out = in;
+            out = scaleOut;
         end
         % ------ Properties setters ------
         % All the setters!!!
