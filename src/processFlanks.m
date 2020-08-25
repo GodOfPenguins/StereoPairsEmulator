@@ -8,7 +8,7 @@ function [scalar, time] = processFlanks(d, sCoord, splay, p, c, isEnabled)
 if isEnabled == true
     vals = getMicPair(d, sCoord, splay, p, c);
 else
-    vals = [1000 1000; 0 0];
+    vals = [1 1; 0 0];
 end
 
 time = [vals(1), vals(3)];

@@ -9,7 +9,7 @@ if isEnabled == true
     d = cm2M(distance);
     vals = getCenterMic(d, s, p, c);
 else
-    vals = [1000 ; 0];
+    vals = [1 ; 0];
 end
 
 scalar = vals(2);
