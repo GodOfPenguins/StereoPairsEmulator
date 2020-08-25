@@ -49,10 +49,12 @@ classdef StereoPairsEmulator < audioPlugin
         micScalarArray;
         micTimeArray;
         micMixArray;
-        micPanArray;        
+        micPanArray;
+        micOutputScalars;
     end
     properties(Dependent)
         recalcFlag;
+        lpCalcFlag;
         sourcePos;
         speedOfSound;
         mDistArray;
@@ -254,6 +256,7 @@ classdef StereoPairsEmulator < audioPlugin
         function out = process(plugin, in) %Actual processing here
             % Calculate values
             if plugin.recalcFlag == 1
+                plugin.lpCalcFlag = 1;
                 [plugin.micScalarArray, plugin.micTimeArray] = ... % Update the mic array properties
                     updateMicArray(...
                     plugin.mDistArray,...
@@ -270,9 +273,17 @@ classdef StereoPairsEmulator < audioPlugin
                 
                 plugin.recalcFlag = 0; % Turn off the recalculation flag once it's done.
             end
+            % Calculate mixbus processing
+            if plugin.lpCalcFlag == 1
+                plugin.micMixArray = db2mag([plugin.gainMains, plugin.gainFlanks, plugin.gainCenter]);
+                plugin.micPanArray = [calculatePairWidth(plugin.mainsWidth), calculatePairWidth(plugin.flanksWidth)];
+                
+                plugin.lpCalcFlag = 0;    
+            end
             % Audio processing
             delayOut = plugin.delayLine([in in in in in], plugin.micTimeArray); % Delayline I/O
-            scaleOut = delayOut * plugin.micScalarArray; % FIX THIS
+
+
             % Output
             out = in;
         end
@@ -312,16 +323,15 @@ classdef StereoPairsEmulator < audioPlugin
         end
         function set.gainMains(plugin, val)
             plugin.gainMains = val;
-            plugin.micMixArray(1) = db2mag(val);
+            plugin.lpCalcFlag = 1;
         end
         function set.gainFlanks(plugin, val)
             plugin.gainFlanks = val;
-            plugin.micMixArray(2) = db2mag(val);
-
+            plugin.lpCalcFlag = 1;
         end
         function set.gainCenter(plugin, val)
             plugin.gainCenter = val;
-            plugin.micMixArray(3) = db2mag(val);
+            plugin.lpCalcFlag = 1;
         end
         function set.useMains(plugin, val)
             plugin.useMains = val;
@@ -359,11 +369,11 @@ classdef StereoPairsEmulator < audioPlugin
         end
         function set.mainsWidth(plugin, val)
             plugin.mainsWidth = val;
-            plugin.micPanArray(1:2) = calculatePairWidth(val);
+            plugin.lpCalcFlag = 1;
         end
         function set.flanksWidth(plugin, val)
             plugin.flanksWidth = val;
-            plugin.micPanArray(3:4) = calculatePairWidth(val);
+            plugin.lpCalcFlag = 1;
         end
         function array = get.mDistArray(plugin)
             array = [plugin.mainsDistance, plugin.flanksDistance, plugin.centerDistance];
@@ -386,6 +396,7 @@ classdef StereoPairsEmulator < audioPlugin
         % ------ Reset -----
         function reset(plugin) % The reset function for the plugin.
             plugin.recalcFlag = 1; % Set the plugin to recalculate information
+            plugni.lpCalcFlag = 1;
             plugin.sampleRate = getSampleRate(plugin); % Get the sample rate
             plugin.micScalarArray = [0 0 0 0 0]; % Should be unecessary, but to be safe
             plugin.micTimeArray = [0 0 0 0 0];
