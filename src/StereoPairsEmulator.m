@@ -26,6 +26,9 @@ classdef StereoPairsEmulator < audioPlugin
         gainMains;
         gainFlanks;
         gainCenter;
+        % Stereo width adjustments
+        mainsWidth;
+        flanksWidth;
         % Toggles for pair use
         useMains;
         useFlanks;
@@ -43,8 +46,10 @@ classdef StereoPairsEmulator < audioPlugin
     properties
         sampleRate = 48000; % default sample rate
         delayLine;
-        micScalarArray = [0 0 0 0 0];
-        micTimeArray = [0 0 0 0 0];
+        micScalarArray;
+        micTimeArray;
+        micMixArray;
+        micPanArray;        
     end
     properties(Dependent)
         recalcFlag;
@@ -54,6 +59,13 @@ classdef StereoPairsEmulator < audioPlugin
         mPArray;
         mSplayArray;
         mEnabledArray;
+        mainLevel;
+        flankLevel;
+        centerLevel;
+        mainPan;
+        flankPan;
+        centerPan;
+        
     end
     properties(Constant)
         PluginInterface = audioPluginInterface(...
@@ -208,6 +220,20 @@ classdef StereoPairsEmulator < audioPlugin
                 'Layout',[1,1],...
                 'DisplayNameLocation','Above'...
             ),...
+            audioPluginParameter('mainsWidth',...
+                'DisplayName','Width',...
+                'Style','Rotaryknob',...
+                'Mapping',{'lin',0,1},...
+                'Layout',[1,1],...
+                'DisplayNameLocation','Above'...
+            ),...
+            audioPluginParameter('flanksWidth',...
+                'DisplayName','Width',...
+                'Style','Rotaryknob',...
+                'Mapping',{'lin',0,1},...
+                'Layout',[1,1],...
+                'DisplayNameLocation','Above'...
+            ),...
             audioPluginGridLayout( ...
                 'RowHeight',[20, 100, 20, 20, 100, 20, 100, 20, 160],...
                 'ColumnWidth',[50, 50, 50, 50, 100, 50, 50, 50, 50])...
@@ -326,6 +352,14 @@ classdef StereoPairsEmulator < audioPlugin
         function set.sourceDistance(plugin, val)
             plugin.sourceDistance = val;
             plugin.recalcFlag = 1;
+        end
+        function set.mainsWidth(plugin, val)
+            plugin.mainsWidth = val;
+            plugin.micPanArray(1:2) = calculatePairWidth(val);
+        end
+        function set.flanksWidth(plugin, val)
+            plugin.flanksWidth = val;
+            plugin.micPanArray(3:4) = calculatePairWidth(val);
         end
         function array = get.mDistArray(plugin)
             array = [plugin.mainsDistance, plugin.flanksDistance, plugin.centerDistance];
