@@ -259,6 +259,7 @@ classdef StereoPairsEmulator < audioPlugin
             % Calculate values
             if plugin.recalcFlag == 1
                 plugin.lpCalcFlag = 1;
+                plugin.mixCalcFlag = 1;
                 [plugin.micScalarArray, plugin.micTimeArray] = ... % Update the mic array properties
                     updateMicArray(...
                     plugin.mDistArray,...
@@ -271,8 +272,7 @@ classdef StereoPairsEmulator < audioPlugin
                 % Adjust for time of arrival correction if not in use
                 if plugin.useDistCompensation == false
                     plugin.micTimeArray = adjTimeArray(plugin.micTimeArray);
-                end
-                
+                end          
                 plugin.recalcFlag = 0; % Turn off the recalculation flag once it's done.
             end
             % Calculate mixbus processing
