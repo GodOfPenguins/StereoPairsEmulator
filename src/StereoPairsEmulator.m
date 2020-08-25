@@ -239,7 +239,7 @@ classdef StereoPairsEmulator < audioPlugin
                     plugin.sampleRate);
                 % Adjust for time of arrival correction if not in use
                 if plugin.useDistCompensation == false
-                    
+                    plugin.micTimeArray = adjTimeArray(plugin.micTimeArray);
                 end
                 
                 plugin.recalcFlag = 0; % Turn off the recalculation flag once it's done.
