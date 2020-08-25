@@ -1,7 +1,9 @@
-function [outputArg1,outputArg2] = sec2Samps(inputArg1,inputArg2)
+function samps = sec2Samps(secs, sr)
 %SEC2SAMPS Summary of this function goes here
 %   Detailed explanation goes here
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
+
+s = secs * sr;
+samps = round(s);
+
 end
 
