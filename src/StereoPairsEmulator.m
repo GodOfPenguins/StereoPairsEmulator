@@ -419,8 +419,6 @@ classdef StereoPairsEmulator < audioPlugin
             plugin.lpCalcFlag = 1;
             plugin.mixCalcFlag = 1;
             plugin.sampleRate = getSampleRate(plugin); % Get the sample rate
-            plugin.micScalarArray = [0 0 0 0 0]; % Should be unecessary, but to be safe
-            plugin.micTimeArray = [0 0 0 0 0];
             reset(plugin.delayLine); % Reinitialise the delay line            
         end
     end
