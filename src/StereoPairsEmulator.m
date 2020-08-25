@@ -228,13 +228,15 @@ classdef StereoPairsEmulator < audioPlugin
         function out = process(plugin, in) %Actual processing here
             % Calculate values
             if plugin.recalcFlag == 1
-                updateMicArray(plugin.mDistArray, plugin.mSplayArray, plugin.mPArray, plugin.sourcePos 
-                mDistArray;
-        mPArray;
-        mSplayArray;
-        mEnabledArray;
-                
-                plugin.recalcFlag = 0;
+                [plugin.micScalarArray, plugin.micTimeArray] = ... % Update the mic array properties
+                    updateMicArray(...
+                    plugin.mDistArray,...
+                    plugin.mSplayArray,...
+                    plugin.mPArray,...
+                    plugin.sourcePos,...
+                    plugin.speedOfSound,...
+                    plugin.mEnabledArray);
+                plugin.recalcFlag = 0; % Turn off the recalculation flag once it's done.
             end
             % Audio processing
             
