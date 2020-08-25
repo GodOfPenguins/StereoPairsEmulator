@@ -20,7 +20,10 @@ else
         otherwise
             s = db2mag(-6);
     end
-    
+    switch (type)
+        case 1 % Flanks only
+        case 2 % Pairwise
+        case 3 % Full array
     
     
 end
