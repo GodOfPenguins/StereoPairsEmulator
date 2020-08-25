@@ -51,10 +51,12 @@ classdef StereoPairsEmulator < audioPlugin
         micMixArray;
         micPanArray;
         micOutputScalars;
+        dampingScalars;
     end
     properties(Dependent)
         recalcFlag;
         lpCalcFlag;
+        mixCalcFlag;
         sourcePos;
         speedOfSound;
         mDistArray;
@@ -275,10 +277,24 @@ classdef StereoPairsEmulator < audioPlugin
             end
             % Calculate mixbus processing
             if plugin.lpCalcFlag == 1
-                plugin.micMixArray = db2mag([plugin.gainMains, plugin.gainFlanks, plugin.gainCenter]);
-                plugin.micPanArray = [calculatePairWidth(plugin.mainsWidth), calculatePairWidth(plugin.flanksWidth)];
-                plugin.micOutputScalars = getMicArrayStereoOutputScalars(plugin.micScalarArray, plugin.micPanArray, plugin.micMixArray);
+                plugin.mixCalcFlag = 1;
+                plugin.micMixArray = ...
+                    db2mag(...
+                        [plugin.gainMains, ...
+                        plugin.gainFlanks,...
+                        plugin.gainCenter]);
+                plugin.micPanArray = ...
+                    [calculatePairWidth(plugin.mainsWidth),...
+                    calculatePairWidth(plugin.flanksWidth)];
                 plugin.lpCalcFlag = 0;    
+            end
+            % Get final mixdown scalars
+            if plugin.mixCalcFlag == 1
+                plugin.micOutputScalars = ...
+                    getMicArrayStereoOutputScalars(plugin.micScalarArray,...
+                    plugin.micPanArray,...
+                    plugin.micMixArray,...
+                    plugin.dampingScalars);
             end
             % Audio processing
             delayOut = plugin.delayLine([in in in in in], plugin.micTimeArray); % Delayline I/O
@@ -354,9 +370,11 @@ classdef StereoPairsEmulator < audioPlugin
         end
         function set.levelAdjustmentEnum(plugin, val)
             plugin.levelAdjustmentEnum = val;
+            plugin.mixCalcFlag = 1;
         end
         function set.levelAdjStrengthEnum(plugin, val)
             plugin.levelAdjStrengthEnum = val;
+            plugin.mixCalcFlag = 1;
         end
         function set.sourceAngle(plugin, val)
             plugin.sourceAngle = val;
@@ -395,7 +413,8 @@ classdef StereoPairsEmulator < audioPlugin
         % ------ Reset -----
         function reset(plugin) % The reset function for the plugin.
             plugin.recalcFlag = 1; % Set the plugin to recalculate information
-            plugni.lpCalcFlag = 1;
+            plugind.lpCalcFlag = 1;
+            plugin.mixCalcFlag = 1;
             plugin.sampleRate = getSampleRate(plugin); % Get the sample rate
             plugin.micScalarArray = [0 0 0 0 0]; % Should be unecessary, but to be safe
             plugin.micTimeArray = [0 0 0 0 0];

@@ -1,15 +1,15 @@
-function values = getMicArrayStereoOutputScalars(vMicArray, panningArray, mixLevelArray)
+function values = getMicArrayStereoOutputScalars(vMicArray, panningArray, mixLevelArray, dampingArray)
 %GETMICARRAYSTEREOOUTPUTSCALARS Takes in the vMic scalars and the mixbus
 %panning and level settings and calculates the final stereo output values
 %for each microphone.
-%   Takes in the virtual microphone scalars, the panning scalars and the
+%   Takes in the virtual microphone scalars, the panning scalars, the distance damping scalars and the
 %   mix gain scalars and calculates the final values needed for the stereo
 %   output for each mic for the left and right stereo output channels.
 %   Output is a 2x5 matrix with the rows as the L and R scalars and the
 %   microphones by column.
 
 mix = [mixLevelArray(1) mixLevelArray(1) mixLevelArray(2) mixLevelArray(2) mixLevelArray(3)];
-mix = mix .* vMicArray;
+mix = mix .* vMicArray .* dampingArray;
 pan = [panningArray(1) panningArray(2) panningArray(3) panningArray(4) sin(pi/4);...
        panningArray(2) panningArray(1) panningArray(4) panningArray(3) sin(pi/4)];
 
