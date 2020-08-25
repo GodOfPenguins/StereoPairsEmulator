@@ -235,11 +235,18 @@ classdef StereoPairsEmulator < audioPlugin
                     plugin.mPArray,...
                     plugin.sourcePos,...
                     plugin.speedOfSound,...
-                    plugin.mEnabledArray);
+                    plugin.mEnabledArray,...
+                    plugin.sampleRate);
+                % Adjust for time of arrival correction if not in use
+                if plugin.useDistCompensation == false
+                    
+                end
+                
                 plugin.recalcFlag = 0; % Turn off the recalculation flag once it's done.
             end
             % Audio processing
-            
+            delayOut = plugin.delayLine([in in in in in], plugin.micTimeArray); % Delayline I/O
+            scaleOut = delayOut * plugin.micScalarArray; % FIX THIS
             % Output
             out = in;
         end
