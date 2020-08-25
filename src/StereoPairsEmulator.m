@@ -413,7 +413,7 @@ classdef StereoPairsEmulator < audioPlugin
         % ------ Reset -----
         function reset(plugin) % The reset function for the plugin.
             plugin.recalcFlag = 1; % Set the plugin to recalculate information
-            plugind.lpCalcFlag = 1;
+            plugin.lpCalcFlag = 1;
             plugin.mixCalcFlag = 1;
             plugin.sampleRate = getSampleRate(plugin); % Get the sample rate
             plugin.micScalarArray = [0 0 0 0 0]; % Should be unecessary, but to be safe
