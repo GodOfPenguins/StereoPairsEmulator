@@ -49,6 +49,7 @@ classdef StereoPairsEmulator < audioPlugin
     properties(Dependent)
         recalcFlag;
         sourcePos;
+        speedOfSound;
         mDistArray;
         mPArray;
         mSplayArray;
@@ -227,7 +228,11 @@ classdef StereoPairsEmulator < audioPlugin
         function out = process(plugin, in) %Actual processing here
             % Calculate values
             if plugin.recalcFlag == 1
-                plugin.sourcePos = sourceCartesianCoordinates(plugin.sourceAngle, plugin.sourceDistance);
+                updateMicArray(plugin.mDistArray, plugin.mSplayArray, plugin.mPArray, plugin.sourcePos 
+                mDistArray;
+        mPArray;
+        mSplayArray;
+        mEnabledArray;
                 
                 plugin.recalcFlag = 0;
             end
@@ -327,6 +332,9 @@ classdef StereoPairsEmulator < audioPlugin
         end
         function pos = get.sourcePos(plugin)
             pos = sourceCartesianCoordinates(plugin.sourceAngle, plugin.sourceDistance);
+        end
+        function sos = get.speedOfSound(plugin)
+            sos = plugin.c + plugin.speedOfSoundTrim;
         end
         % ------ Reset -----
         function reset(plugin) % The reset function for the plugin.
