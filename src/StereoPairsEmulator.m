@@ -1,6 +1,9 @@
 classdef StereoPairsEmulator < audioPlugin
-    %STEREOPAIRSEMULATOR Summary of this class goes here
-    %   Detailed explanation goes here
+    %STEREOPAIRSEMULATOR Emulates the level and time differences of a
+    %microphone array
+    %   This plugin emulates the level and time cues of a microphone array.
+    %   It takes in a mono input and outputs a stereo signal based on the
+    %   virtual microphone set-up and the mixdown settings.
     
     properties
         % ------UI PROPERTIES-----
@@ -37,9 +40,19 @@ classdef StereoPairsEmulator < audioPlugin
         sourceAngle;
         sourceDistance;   
     end
-    properties(Access = private)
+    properties
         sampleRate = 48000; % default sample rate
-        delayLine;        
+        delayLine;
+        micScalarArray = [0 0 0 0 0];
+        micTimeArray = [0 0 0 0 0];
+    end
+    properties(Dependent)
+        recalcFlag;
+        sourcePos;
+        mDistArray;
+        mPArray;
+        mSplayArray;
+        mEnabledArray;
     end
     properties(Constant)
         PluginInterface = audioPluginInterface(...
@@ -202,8 +215,6 @@ classdef StereoPairsEmulator < audioPlugin
     properties(Constant)%Some convenience numbers
         hpi = pi/2;
         c = 343;
-        sq2 = sqrt(2);
-        cm2m = 1 / 100; % convenience for converting cm to m
     end
     
     methods
@@ -215,15 +226,114 @@ classdef StereoPairsEmulator < audioPlugin
         end
         function out = process(plugin, in) %Actual processing here
             % Calculate values
-            
+            if plugin.recalcFlag == 1
+                plugin.sourcePos = sourceCartesianCoordinates(plugin.sourceAngle, plugin.sourceDistance);
+                
+                plugin.recalcFlag = 0;
+            end
             % Audio processing
             
             % Output
             out = in;
         end
+        % ------ Properties setters ------
+        % All the setters!!!
+        function set.mainsSplay(plugin, val)
+            plugin.mainSplay = val;
+            plugin.recalcFlag = 1; % This consistently raises a warning, but it shouldn't (?) be a problem...
+        end
+        function set.flanksSplay(plugin, val)
+            plugin.flanksSplay = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.mainsDistance(plugin, val)
+            plugin.mainsDistance = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.flanksDistance(plugin, val)
+            plugin.flanksDistance = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.centerDistance(plugin, val)
+            plugin.centerDistance = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.pMains(plugin, val)
+            plugin.pMains = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.pFlanks(plugin, val)
+            plugin.pFlanks = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.pCenter(plugin, val)
+            plugin.pCenter = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.gainMains(plugin, val)
+            plugin.gainMains = val;
+        end
+        function set.gainFlanks(plugin, val)
+            plugin.gainFlanks = val;
+        end
+        function set.gainCenter(plugin, val)
+            plugin.gainCenter = val;
+        end
+        function set.useMains(plugin, val)
+            plugin.useMains = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.useFlanks(plugin, val)
+            plugin.useFlanks = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.useCenter(plugin, val)
+            plugin.useCenter = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.useDistCompensation(plugin, val)
+            plugin.useDistCompensation = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.speedOfSoundTrim(plugin, val)
+            plugin.speedOfSoundTrim = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.levelAdjustmentEnum(plugin, val)
+            plugin.levelAdjustmentEnum = val;
+        end
+        function set.levelAdjStrengthEnum(plugin, val)
+            plugin.levelAdjStrengthEnum = val;
+        end
+        function set.sourceAngle(plugin, val)
+            plugin.sourceAngle = val;
+            plugin.recalcFlag = 1;
+        end
+        function set.sourceDistance(plugin, val)
+            plugin.sourceDistance = val;
+            plugin.recalcFlag = 1;
+        end
+        function array = get.mDistArray(plugin)
+            array = [plugin.mainsDistance, plugin.flanksDistance, plugin.centerDistance];
+        end
+        function array = get.mSplayArray(plugin)
+            array = [plugin.mainsSplay, plugin.flanksSplay];
+        end
+        function array = get.mPArray(plugin)
+            array = [plugin.pMains, plugin.pFlanks, plugin.pCenter];
+        end
+        function array = get.mEnabledArray(plugin)
+            array = [plugin.useMains, plugin.useFlanks, plugin.useCenter];
+        end
+        function pos = get.sourcePos(plugin)
+            pos = sourceCartesianCoordinates(plugin.sourceAngle, plugin.sourceDistance);
+        end
+        % ------ Reset -----
         function reset(plugin) % The reset function for the plugin.
             plugin.recalcFlag = 1; % Set the plugin to recalculate information
             plugin.sampleRate = getSampleRate(plugin); % Get the sample rate
+            plugin.micScalarArray = [0 0 0 0 0]; % Should be unecessary, but to be safe
+            plugin.micTimeArray = [0 0 0 0 0];
             reset(plugin.delayLine); % Reinitialise the delay line            
         end
     end
