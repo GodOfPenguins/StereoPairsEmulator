@@ -1,7 +1,8 @@
-function [outputArg1,outputArg2] = dampingFullArray(inputArg1,inputArg2)
-%DAMPINGFULLARRAY Summary of this function goes here
-%   Detailed explanation goes here
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
+function vals = dampingFullArray(dArray, strength)
+%DAMPINGFULLARRAY Calculates distance damping for the full vMic array
+%   This class is kinda redundant, just included for consistency.
+
+vals = distanceDamping(dArray, strength);
+
 end
 

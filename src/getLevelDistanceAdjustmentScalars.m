@@ -9,23 +9,26 @@ function vals = getLevelDistanceAdjustmentScalars(type,strength,dArray)
 if type == 0 % Quick check to see if we are actually using this parameter.
     vals = [1 1 1 1 1];
 else
-    s;
     switch(strength)
         case 0 % -6dB
-            s = db2mag(-6);
+            s = 20;
         case 1 % -3dB
-            s = db2mag(-3);
+            s = 10;
         case 2 % -1.5dB
-            s = db2mag(-1.5);
+            s = 5;
         otherwise
-            s = db2mag(-6);
+            s = 10;
     end
     switch (type)
         case 1 % Flanks only
+            vals = dampingFlanks(dArray, s);
         case 2 % Pairwise
+            vals = dampingPairwise(dArray, s);
         case 3 % Full array
-    
-    
+            vals = dampingFullArray(dArray, s);
+        otherwise
+            vals = [1 1 1 1 1];
+    end
 end
 end
 
