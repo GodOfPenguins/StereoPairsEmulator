@@ -7,12 +7,13 @@ function [scalar, time] = processMains(distance, sCoord, splay, p, c, isEnabled)
 
 if isEnabled == true
     d = cm2M(distance);
-    vals = getMicPair(d, sCoord, play, p, c);
+    vals = getMicPair(d, sCoord, splay, p, c);
 else
     vals = [1000 0];
 end
 
-[time, scalar] = vals;
+time = vals(1);
+scalar = vals(2);
 
 
 
