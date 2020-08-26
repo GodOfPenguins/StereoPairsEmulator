@@ -9,11 +9,11 @@ if isEnabled == true
     d = cm2M(distance);
     vals = getMicPair(d, sCoord, splay, p, c);
 else
-    vals = [1 0; 1 0];
+    vals = [1 1; 0 0];
 end
 
-time = [vals(1), vals(3)];
-scalar = [vals(2), vals(4)];
+time = vals(1,:);
+scalar = vals(2,:);
 
 end
 

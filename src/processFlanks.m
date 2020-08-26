@@ -11,8 +11,8 @@ else
     vals = [1 1; 0 0];
 end
 
-time = [vals(1), vals(3)];
-scalar = [vals(2), vals(4)];
+time = vals(1,:);
+scalar = vals(2,:);
 
 end
 
