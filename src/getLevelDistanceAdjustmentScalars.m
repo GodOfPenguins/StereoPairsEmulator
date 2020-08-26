@@ -1,4 +1,4 @@
-function vals = getLevelDistanceAdjustmentScalars(type,strength,dArray)
+function vals = getLevelDistanceAdjustmentScalars(type,strength,dArray, s)
 %GETLEVELDISTANCEADJUSTMENTSCALARS Calcualtes the level adjustment scalars
 %for the vMic array.
 %   Takes in the type of level adjustment and the level adjustment strength
@@ -9,6 +9,7 @@ function vals = getLevelDistanceAdjustmentScalars(type,strength,dArray)
 if type == 'None' % Quick check to see if we are actually using this parameter.
     vals = [1 1 1 1 1];
 else
+    d = getMicDistanceArray(dArray, s);
     switch(strength)
         case '-6' % -6dB
             s = 20;
@@ -21,11 +22,11 @@ else
     end
     switch (type)
         case 'Flanks Only' % Flanks only
-            vals = dampingFlanks(dArray, s);
+            vals = dampingFlanks(d, s);
         case 'Pairwise' % Pairwise
-            vals = dampingPairwise(dArray, s);
+            vals = dampingPairwise(d, s);
         case 'Full Array' % Full array
-            vals = dampingFullArray(dArray, s);
+            vals = dampingFullArray(d, s);
         otherwise
             vals = [1 1 1 1 1];
     end
