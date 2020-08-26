@@ -6,25 +6,25 @@ function vals = getLevelDistanceAdjustmentScalars(type,strength,dArray)
 %   calculates the amount of damping per distance based on the input
 %   parameters.
 
-if type == 0 % Quick check to see if we are actually using this parameter.
+if type == 'None' % Quick check to see if we are actually using this parameter.
     vals = [1 1 1 1 1];
 else
     switch(strength)
-        case 0 % -6dB
+        case '-6' % -6dB
             s = 20;
-        case 1 % -3dB
+        case '-3' % -3dB
             s = 10;
-        case 2 % -1.5dB
+        case '1.5' % -1.5dB
             s = 5;
         otherwise
             s = 10;
     end
     switch (type)
-        case 1 % Flanks only
+        case 'Flanks Only' % Flanks only
             vals = dampingFlanks(dArray, s);
-        case 2 % Pairwise
+        case 'Pairwise' % Pairwise
             vals = dampingPairwise(dArray, s);
-        case 3 % Full array
+        case 'Full Array' % Full array
             vals = dampingFullArray(dArray, s);
         otherwise
             vals = [1 1 1 1 1];
