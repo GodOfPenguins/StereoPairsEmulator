@@ -6,7 +6,7 @@ Currently in the middle of massive refactoring/rewriting, as the original write 
 
 This audio plugin is being developed as a competition entry in the [2020 AES/MatLab plugin design competition](http://www.aes.org/students/awards/mpsc/). Some design/function allowances had to be made to accomodate the 2x2 I/O limitation dictated by the competition rules.
 
-For a more detailed explaination of how this processor work, see the technical documentation.
+For a more detailed explaination of how this processor works, see the technical documentation (still WiP).
 
 ## Sound Source Options
 
