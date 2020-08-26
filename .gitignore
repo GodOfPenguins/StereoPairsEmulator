@@ -5,3 +5,4 @@
 Technical Documentation/main.log
 *.asv
 *.mldatx
+src/StereoPairsEmulator.dll
