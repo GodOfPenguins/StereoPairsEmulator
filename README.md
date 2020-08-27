@@ -2,9 +2,7 @@
 
 This is for a plugin that emulates a stereophonic microphone array. The emulated array can contain a main pair, a center microphone, and a flanking pair -- each pair and the center microphone are individually adjustable.
 
-Currently in the middle of massive refactoring/rewriting, as the original write lacked certain key UI integrations and sprawled unnecessarily.
-
-This audio plugin is being developed as a competition entry in the [2020 AES/MatLab plugin design competition](http://www.aes.org/students/awards/mpsc/). Some design/function allowances had to be made to accomodate the 2x2 I/O limitation dictated by the competition rules.
+This audio plugin was developed as a competition entry in the [2020 AES/MatLab plugin design competition](http://www.aes.org/students/awards/mpsc/). Some design/function allowances had to be made to accomodate the 2x2 I/O limitation dictated by the competition rules.
 
 For a more detailed explaination of how this processor works, see the technical documentation (still WiP).
 
