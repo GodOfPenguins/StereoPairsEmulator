@@ -4,6 +4,8 @@ This is for a plugin that emulates a stereophonic microphone array. The emulated
 
 This audio plugin was developed as a competition entry in the [2020 AES/MatLab plugin design competition](http://www.aes.org/students/awards/mpsc/). Some design/function allowances had to be made to accomodate the 2x2 I/O limitation dictated by the competition rules.
 
+Update: This plugin was accepted into the final round of judging.
+
 For a more detailed explaination of how this processor works, see the technical documentation (still WiP).
 
 ## Sound Source Options
